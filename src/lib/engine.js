@@ -3,15 +3,45 @@ import RectEntity from '../entities/Rect';
 import SceneEntity from '../entities/Scene';
 
 
+
+
+function PopupMenu({coords,menu_data}) {
+    return   <div 
+        className="popup-menu" 
+        onClick={(e) => {e.stopPropagation();}}
+        style={{
+            left:`${coords[0] - 60}px`,
+            top:`${coords[1]}px`,
+        }}
+        >
+    <p>asd</p>
+    <p>asd</p>
+    <p>asd</p>
+</div>
+}
+
+
 class Engine {
     constructor() {
         this.active_scene = proxy({val : new SceneEntity()});
-        this.selected_element = "";
         this.selected_entity = proxy({val : this.active_scene.val});
+        this.is_code_editor_visible = proxy({val: false});
+        
+        this.cur_script_prox = proxy({val: undefined});
+        this.selected_element = "";
+
+        this.keep_menu_visible = proxy({val: false});
+
+        this.popup_menu = {
+            coords : proxy([0,0]),
+            data : [],
+            visible : proxy({val: false}),
+            renderer : PopupMenu,
+
+        };
     }
     select_element(element_type) {
         this.selected_element = element_type;
-
         this.active_scene.val.add_entity(new RectEntity());
     }
     on_canvas_click(mouse_event) {
@@ -21,9 +51,31 @@ class Engine {
         this.selected_element =  "";
     } 
     on_entity_select(ref,mouse_event) {
+        this.popup_menu.visible.val = false;
         mouse_event.stopPropagation();
         this.selected_entity.val = ref;
     }
+
+    hide_code_editor() {
+        this.is_code_editor_visible.val = false;
+    }
+    show_code_editor(script_prox) {
+        this.is_code_editor_visible.val = true;
+        this.cur_script_prox.val = script_prox;
+    }
+    window_clicked() {
+        this.popup_menu.visible.val = false;
+    }
+
+    pop_menu(e,coords,menu_data) {
+        this.popup_menu.coords[0] = coords.x;
+        this.popup_menu.coords[1] = coords.y;
+        this.popup_menu.visible.val = true;
+        this.popup_menu.data = menu_data;
+
+        e.stopPropagation();
+    }
+
 
 
     //TODO: generate code 

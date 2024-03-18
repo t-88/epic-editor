@@ -1,8 +1,8 @@
 import { proxy, useSnapshot } from "valtio";
-import Color from "../comps/Color.js";
-import Size from "../comps/Size.js";
+import Color from "../comps/Color.jsx";
+import Size from "../comps/Size.jsx";
 import engine from "../lib/engine.js";
-import Script from "../comps/Script.js";
+import Script from "../comps/Script.jsx";
 
 
 function SceneEntityComponent(ref) {

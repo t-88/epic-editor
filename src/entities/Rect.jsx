@@ -1,8 +1,8 @@
 import { useSnapshot } from "valtio";
-import Position from "../comps/Position.js";
-import Size from "../comps/Size.js";
+import Position from "../comps/Position.jsx";
+import Size from "../comps/Size.jsx";
 import engine from "../lib/engine.js";
-import Script from "../comps/Script.js";
+import Script from "../comps/Script.jsx";
 
 
 function RectEntityComponent(ref,pos,size) {

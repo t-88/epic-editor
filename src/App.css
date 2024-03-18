@@ -13,8 +13,10 @@ html ,body {
   color: white;
 
   display: flex;
-}
 
+  position: relative;
+  overflow: hidden;
+}
 #selection-list {
   flex: 2;
   width: 20%;
@@ -82,6 +84,23 @@ html ,body {
   background-color: #131313;
   box-shadow: #202020 0px 2px 0px;
 }
+.component .title-icon {
+  display: flex;
+  justify-content: space-between;
+  box-shadow: #202020 0px 2px 0px;
+  padding: 5px 20px 0 20px;
+  margin: 0 0 15px 0;
+}
+.component .title-icon p {
+  font-weight: bold;
+  background-color: #131313;
+  padding: 0;
+  margin: 0;
+}
+.component .title-icon img {
+  cursor: pointer;
+}
+
 .component-props-row {
   display: flex;
   justify-content: space-between;
@@ -94,4 +113,56 @@ html ,body {
 .component-props-row p{ 
   margin: 5px 0;
   width: 10px;
+}
+
+
+.component .scripts {
+  padding: 5px 20px 5px 20px;
+}
+
+.script-view {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 0 15px 0 ;
+}
+.script-view p {
+  cursor: pointer;
+  padding: 0;
+  margin: 0 ;
+}
+.script-view img {
+  cursor: pointer;
+}
+
+
+#code-editor {
+  position: absolute;
+
+  top: 100px;
+  left: 100px;
+
+  width: 300px;
+  height: 300px;
+  background-color: rgb(50, 50, 150);
+  border: solid white 2px;
+}
+
+#code-editor .remove-icon {
+  transform: rotate(45deg);
+  cursor: pointer;
+}
+
+.more-icon {
+  position: relative;
+}
+.popup-menu {
+  position: absolute;
+  width: 80px;
+  background-color: red;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  right: 0;
+  top: 0;
 }
