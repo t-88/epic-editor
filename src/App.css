@@ -1,38 +1,97 @@
-.App {
-  text-align: center;
+html ,body {
+  width: 100%;
+  height: 100%;
+  background-color: black;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+
+#root {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  color: white;
+
+  display: flex;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+#selection-list {
+  flex: 2;
+  width: 20%;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+#canvas-container {
+  flex: 8;
+  width: 610%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  background: #181818;
+}
+#canvas {
+  background-color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+
+#status-area {
+  flex: 2;
+  padding: 0 4px 0 4px;
+}
+#status-area #status-area-title { 
+  padding: 0 10px 0 10px ;
+}
+
+
+
+
+.rect-entity {
+  position: absolute;
+}
+
+.inline-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.inline-input  input{
+  width: 50px;
+  height: min-content;
+  text-align: center;
+}
+
+
+.component {
   color: white;
-}
+  
+  padding: 0 0 10px 0;
 
-.App-link {
-  color: #61dafb;
-}
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  background-color: #101010;
+  margin-bottom: 10px;
+
+}
+.component .title {
+  padding: 5px 20px 5px 20px;
+  margin: 0 0 15px 0;
+  font-weight: bold;
+  background-color: #131313;
+  box-shadow: #202020 0px 2px 0px;
+}
+.component-props-row {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  flex-wrap: wrap;
+
+  padding: 0 20px 0 20px;
+  border: 1px white ;
+}
+.component-props-row p{ 
+  margin: 5px 0;
+  width: 10px;
 }
