@@ -31,7 +31,7 @@ export default function App() {
       {
         (()=>{
           if(popup_menu_prox.visible.val) {
-            return <engine.popup_menu.renderer coords={popup_menu_prox.coords} />
+            return <engine.popup_menu.renderer coords={popup_menu_prox.coords} menu_data={engine.popup_menu.data} />
           }
         })()
       }

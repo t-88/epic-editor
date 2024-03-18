@@ -14,9 +14,12 @@ function PopupMenu({coords,menu_data}) {
             top:`${coords[1]}px`,
         }}
         >
-    <p>asd</p>
-    <p>asd</p>
-    <p>asd</p>
+
+        {menu_data.map((option,idx) => {
+            return <p key={idx} onClick={option.callback}>
+                {option.title}
+            </p>
+        }) }
 </div>
 }
 

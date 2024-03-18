@@ -11,7 +11,16 @@ function ScriptComponent(ref) {
     const scripts_prox = useSnapshot(ref.scripts);
     const widget_ref = useRef();
 
-    
+    function generate_menu_options(script, idx) {
+        return [
+            {title : "Delete", callback: () => {console.log("deleting...");}},
+            {title : "Edit", callback: () => {
+                engine.show_code_editor(ref.scripts[idx]);
+            }},
+        ];
+    }
+
+
     return  <div className="component">  
         <section className="title-icon">
             <p>Script</p>
@@ -29,7 +38,6 @@ function ScriptComponent(ref) {
                 scripts_prox.map((script_data,idx) => {
                     return  <div  className="script-view" key={idx}
                                 onClick={() => {
-                                    engine.hide_code_editor();
                                     engine.show_code_editor(ref.scripts[idx]);
                                 }}
                             >
@@ -40,7 +48,7 @@ function ScriptComponent(ref) {
                                     {
                                     x: widget_ref.current.getBoundingClientRect().x,
                                     y: widget_ref.current.getBoundingClientRect().y,
-                                },{})
+                                },generate_menu_options(script_data,idx))
                                 }
                             >
                                 <img  src={more_icon} width={20} height={20} alt="more-icon"/>
