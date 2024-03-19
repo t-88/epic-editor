@@ -7,12 +7,22 @@ import engine from "../lib/engine";
 
 export default function CodeEditor() {
     const script = useSnapshot(engine.cur_script_prox);
-    return <div id="code-editor">
-        <img className="remove-icon" 
-             src={add_icon} alt="remove" width={25} height={25} 
-             onClick={() => {engine.hide_code_editor();}}
+    const pos = useSnapshot(engine.code_editor_pos);
 
-        />
+    return <div id="code-editor"
+        style={{
+            left: `${pos.x}px`,
+            top: `${pos.y}px`,
+        }}
+    >
+        <div className="window-bar" onDrag={(e) => {engine.code_editor_drag(e);}}>
+         <img className="remove-icon" 
+              src={add_icon} alt="remove" width={25} height={25} 
+              onClick={() => {engine.hide_code_editor();}}
+
+         />
+        </div>
+
 
         <p>name</p>
         <input type="text"

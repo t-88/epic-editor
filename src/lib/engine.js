@@ -34,14 +34,19 @@ class Engine {
         this.selected_element = "";
 
         this.keep_menu_visible = proxy({val: false});
-
         this.popup_menu = {
             coords : proxy([0,0]),
             data : [],
             visible : proxy({val: false}),
             renderer : PopupMenu,
-
         };
+
+
+
+        this.code_editor_pos = proxy({
+            x: 100,
+            y: 100,
+        })
     }
     select_element(element_type) {
         this.selected_element = element_type;
@@ -80,7 +85,16 @@ class Engine {
     }
 
 
+    code_editor_drag(mouse_event) {
+        let x = mouse_event.clientX;
+        let y = mouse_event.clientY;
+        
+        // ignore stop drop event 
+        if(x == 0 && y == 0) return; 
 
+        this.code_editor_pos.x = x;
+        this.code_editor_pos.y = y;
+    }
     //TODO: generate code 
     // generate_code()  {
     //     let entities = [];
