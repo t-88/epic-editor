@@ -8,8 +8,6 @@ import { useRef } from "react";
 
 
 function ScriptElement({refr,idx}) {
-    const widget_ref = useRef();
-
     function generate_menu_options(idx) {
         return [
             {title : "Delete", callback: () => {
@@ -29,12 +27,12 @@ function ScriptElement({refr,idx}) {
         engine.show_code_editor(refr.scripts[idx]);
     }}>
        <p>{refr.scripts[idx].title}</p>
-        <div ref={widget_ref} className="more-icon"
+        <div className="more-icon"
              onClick={(e) => engine.pop_menu(
                 e,
                 {
-                x: widget_ref.current.getBoundingClientRect().x,
-                y: widget_ref.current.getBoundingClientRect().y,
+                x: e.target.getBoundingClientRect().x,
+                y: e.target.getBoundingClientRect().y,
             },generate_menu_options(idx))
             }
         >
@@ -46,6 +44,7 @@ function ScriptElement({refr,idx}) {
 
 function ScriptComponent(ref) {
     const scripts_prox = useSnapshot(ref.scripts);
+
 
     return  <div className="component">  
         <section className="title-icon">

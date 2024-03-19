@@ -5,7 +5,6 @@ export default function StatusArea() {
     const selected_entity = useSnapshot(engine.selected_entity);
     return (
       <div id="status-area">
-
         <p id="status-area-title"><b>Inspector</b></p>        
         {
             !selected_entity.val ? 

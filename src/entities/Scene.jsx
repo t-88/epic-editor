@@ -36,6 +36,7 @@ function SceneEntityComponent(ref) {
 }
 export default class SceneEntity {
     constructor() {
+        
         this.size = new Size(400 , 600);
         this.script = new Script("");
         this.bg_color = new Color(255,255,255);

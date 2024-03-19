@@ -12,13 +12,13 @@ function ColorComponent(ref,r,g,b) {
 
         <section className="component-props-row">
         <div className="inline-input">
-            <p>r: </p> <input value={r_prox.val} onChange={(e) =>  r.val = parseInt(e.target.value)} />    
+            <p>r </p> <input value={r_prox.val} onChange={(e) =>  r.val = parseInt(e.target.value)} />    
         </div>
         <div className="inline-input">
-            <p>g: </p> <input value={g_prox.val} onChange={(e) =>  g.val = parseInt(e.target.value)} />    
+            <p>g </p> <input value={g_prox.val} onChange={(e) =>  g.val = parseInt(e.target.value)} />    
         </div>  
         <div className="inline-input">
-            <p>b: </p> <input value={b_prox.val} onChange={(e) =>  b.val = parseInt(e.target.value)} />    
+            <p>b </p> <input value={b_prox.val} onChange={(e) =>  b.val = parseInt(e.target.value)} />    
         </div>        
         </section>
     </div>
