@@ -75,6 +75,10 @@ class Engine {
         this.popup_menu.visible.val = false;
     }
 
+
+    hide_popup_menu() {
+        this.popup_menu.visible.val = false;
+    }
     pop_menu(e,coords,menu_data) {
         this.popup_menu.coords[0] = coords.x;
         this.popup_menu.coords[1] = coords.y;
