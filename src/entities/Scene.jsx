@@ -19,7 +19,7 @@ function SceneEntityComponent(ref) {
 
     const entities = useSnapshot(ref.entities);
 
-    return  <div id="canvas" onClick={(e) => {
+    return  <div id="canvas" onMouseDown={(e) => {
         engine.on_entity_select(ref,e);
     }} className="scene-entity" style={{
         width :  `${size_prox.w.val}px`, 

@@ -41,27 +41,64 @@ class Engine {
             renderer : PopupMenu,
         };
 
-
-
         this.code_editor_pos = proxy({
             x: 100,
             y: 100,
-        })
+        });
+        
+
+        this.mouse_down = false; 
+        this.mouse = {
+            down : false,
+        }
+
+        this.dragged_entity_info = {
+            entity : proxy({val : undefined}),
+            offset : {
+                x: 0,
+                y: 0,
+            }
+        }
+        this.canvas_rect = { x: 0, y: 0};
+
+        this.events();
     }
+
+    events() {
+        document.body.onmousedown = () => {
+            this.mouse_down = true;
+        }
+        document.body.onmouseup = () => {
+            this.mouse_down = false;
+            this.dragged_entity_info.entity.val = undefined;
+        }
+
+        document.body.onmousemove = (e) => {
+            this.mouse_move(e);
+        }
+    }
+
+
     select_element(element_type) {
         this.selected_element = element_type;
         this.active_scene.val.add_entity(new RectEntity());
+
+
     }
     on_canvas_click(mouse_event) {
         if(this.selected_element ==  "") return
         let x = mouse_event.nativeEvent.offsetX;
         let y = mouse_event.nativeEvent.offsetY;
         this.selected_element =  "";
+
     } 
     on_entity_select(ref,mouse_event) {
         this.popup_menu.visible.val = false;
-        mouse_event.stopPropagation();
         this.selected_entity.val = ref;
+        
+        
+        this.mouse_down = true;
+        mouse_event.stopPropagation();
     }
 
     hide_code_editor() {
@@ -101,6 +138,16 @@ class Engine {
         this.code_editor_pos.x = x;
         this.code_editor_pos.y = y;
     }
+
+
+    mouse_move(e) {
+        if(!this.dragged_entity_info.entity.val || !this.mouse_down) return;
+        console.log(this.dragged_entity_info.offset.x);
+        this.dragged_entity_info.entity.val.pos.x.val = Math.round(e.clientX - this.canvas_rect.x - this.dragged_entity_info.offset.x);
+        this.dragged_entity_info.entity.val.pos.y.val = Math.round(e.clientY - this.canvas_rect.y - this.dragged_entity_info.offset.y);
+    }
+
+
     //TODO: generate code 
     // generate_code()  {
     //     let entities = [];
