@@ -44,6 +44,7 @@ export default function SelectionList() {
           {
             title : "Scene",
             depth: depth,
+            entity : node.val,
           }
         );        
         for (let i = 0; i < node.val.entities.length; i++) {
@@ -54,6 +55,7 @@ export default function SelectionList() {
           {
             title : "Rectangle",
             depth: depth,
+            entity : node,
           }
         );
       }
@@ -73,10 +75,9 @@ export default function SelectionList() {
           {
             (()=>{
               const hierachy_map = [];
-              console.log(hierachy_map);
               generate_hierachy(engine.active_scene,hierachy_map);
-              return hierachy_map.map((ent,idx) => {
-                return <HierachyElement title={ent.title} depth={ent.depth}/>
+              return hierachy_map.map((item,idx) => {
+                return <HierachyElement key={idx}  entity={item.entity} title={item.title} depth={item.depth}/>
               })  
             })()
 

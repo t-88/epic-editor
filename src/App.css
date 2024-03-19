@@ -4,6 +4,9 @@ html ,body {
   background-color: black;
 }
 
+* {
+  box-sizing: border-box;
+}
 
 #root {
   display: flex;
@@ -20,6 +23,8 @@ html ,body {
 #selection-list {
   flex: 2;
   width: 20%;
+  display: flex;
+  flex-direction: column;
 }
 
 #canvas-container {
@@ -227,6 +232,9 @@ html ,body {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  height: 100%;
+
+  box-sizing: border-box;
 }
 
 .hierachy-element  * {
