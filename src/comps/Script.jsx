@@ -3,7 +3,6 @@ import add_icon from "../assets/plus.png";
 import more_icon from "../assets/more.png";
 import engine from "../lib/engine";
 import ScriptData from "../models/ScriptData";
-import { useRef } from "react";
 
 
 
@@ -45,6 +44,9 @@ function ScriptElement({refr,idx}) {
 function ScriptComponent(ref) {
     const scripts_prox = useSnapshot(ref.scripts);
 
+    // when change store
+    engine.update_store();
+
 
     return  <div className="component">  
         <section className="title-icon">
@@ -75,11 +77,12 @@ export default class Script {
         this.renderer = () => ScriptComponent(this);
     }
 
+    load(data) {
+        this.scripts = proxy([...data]);
+    }
 
     code() {
-        return {
-            script : this.script.val,
-        }
+        return [...this.scripts];
     }
 
 }

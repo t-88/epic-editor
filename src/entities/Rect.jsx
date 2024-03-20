@@ -26,7 +26,6 @@ function RectEntityComponent(ref,pos,size,color) {
     function on_mouse_down(e) {
         engine.on_entity_select(ref,e);
         engine.dragged_entity_info.entity.val = ref;
-        console.log(e);
         engine.dragged_entity_info.offset.x = e.nativeEvent.offsetX;
         engine.dragged_entity_info.offset.y = e.nativeEvent.offsetY;
     }
@@ -41,6 +40,7 @@ function RectEntityComponent(ref,pos,size,color) {
 }
 export default class RectEntity {
     constructor() {
+        this.type = "rect";
         this.pos =  new Position(50,50);
         this.size = new Size(10 , 10);
         this.color = new Color(255,0,0);
@@ -54,7 +54,24 @@ export default class RectEntity {
         this.renderer = () => RectEntityComponent(this,this.pos,this.size,this.color);
     }
 
-    render() {
-        
+    static load(data) {
+        let entity = new RectEntity();
+        entity.pos.load(data.pos); 
+        entity.size.load(data.size); 
+        entity.color.load(data.color); 
+        entity.script.load(data.script);
+        return entity;
     }
+
+    code() {
+        let  entity = {
+            type : this.type,
+            pos : this.pos.code(), 
+            size : this.size.code(), 
+            color : this.color.code(), 
+            script : this.script.code(), 
+        };
+        return entity;        
+    }
+
 }

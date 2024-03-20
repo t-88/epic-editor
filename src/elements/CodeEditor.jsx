@@ -9,6 +9,9 @@ export default function CodeEditor() {
     const script = useSnapshot(engine.cur_script_prox);
     const pos = useSnapshot(engine.code_editor_pos);
 
+
+    engine.update_store();
+    
     return <div id="code-editor"
         style={{
             left: `${pos.x}px`,

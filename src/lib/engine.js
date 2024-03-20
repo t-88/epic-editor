@@ -1,39 +1,26 @@
 import { proxy } from 'valtio'
 import RectEntity from '../entities/Rect';
 import SceneEntity from '../entities/Scene';
+import PopupMenu from "../elements/PopupMenu";
 
 
 
 
-function PopupMenu({coords,menu_data}) {
-    return   <div 
-        className="popup-menu" 
-        onClick={(e) => {e.stopPropagation();}}
-        style={{
-            left:`${coords[0] - 60}px`,
-            top:`${coords[1]}px`,
-        }}
-        >
-
-        {menu_data.map((option,idx) => {
-            return <p key={idx} onClick={option.callback}>
-                {option.title}
-            </p>
-        }) }
-</div>
-}
 
 
 class Engine {
     constructor() {
-        this.active_scene = proxy({val : new SceneEntity()});
+        this.active_scene = undefined;
+        this.load_from_local_storage();
+
         this.selected_entity = proxy({val : this.active_scene.val});
         this.is_code_editor_visible = proxy({val: false});
-        
         this.cur_script_prox = proxy({val: undefined});
         this.selected_element = "";
-
         this.keep_menu_visible = proxy({val: false});
+
+
+        
         this.popup_menu = {
             coords : proxy([0,0]),
             data : [],
@@ -41,27 +28,17 @@ class Engine {
             renderer : PopupMenu,
         };
 
-        this.code_editor_pos = proxy({
-            x: 100,
-            y: 100,
-        });
-        
-
+        this.code_editor_pos = proxy({ x: 100, y: 100});
         this.mouse_down = false; 
-        this.mouse = {
-            down : false,
-        }
 
         this.dragged_entity_info = {
             entity : proxy({val : undefined}),
-            offset : {
-                x: 0,
-                y: 0,
-            }
+            offset : {x: 0,y: 0,}
         }
         this.canvas_rect = { x: 0, y: 0};
-
         this.events();
+
+
     }
 
     events() {
@@ -76,6 +53,14 @@ class Engine {
         document.body.onmousemove = (e) => {
             this.mouse_move(e);
         }
+    }
+    load_from_local_storage() {
+        this.active_scene = proxy({val: undefined});
+        if(!localStorage.getItem("saved-scene")) {
+            this.active_scene.val =  new SceneEntity(); 
+            return;
+        }
+        this.active_scene.val = SceneEntity.load(JSON.parse(localStorage.getItem("saved-scene")));
     }
 
 
@@ -142,11 +127,14 @@ class Engine {
 
     mouse_move(e) {
         if(!this.dragged_entity_info.entity.val || !this.mouse_down) return;
-        console.log(this.dragged_entity_info.offset.x);
         this.dragged_entity_info.entity.val.pos.x.val = Math.round(e.clientX - this.canvas_rect.x - this.dragged_entity_info.offset.x);
         this.dragged_entity_info.entity.val.pos.y.val = Math.round(e.clientY - this.canvas_rect.y - this.dragged_entity_info.offset.y);
     }
 
+
+    update_store() {
+        localStorage.setItem("saved-scene",JSON.stringify(this.active_scene.val.code()));
+    }
 
     //TODO: generate code 
     // generate_code()  {

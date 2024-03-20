@@ -31,7 +31,15 @@ export default function SelectionList() {
           alert("wait for it, wait for it, nah. i got nothing");
           // engine.generate_code();
         } 
+      },
+      {
+        title: "Reset",
+        on_click : (e) => {
+          engine.update_store();
+          // engine.generate_code();
+        } 
       }      
+
     ];
 
 

@@ -1,9 +1,14 @@
 import { proxy, useSnapshot } from "valtio";
+import engine from "../lib/engine";
 
 
 function PositionComponent(ref,x,y) {
     const x_prox = useSnapshot(x);
     const y_prox = useSnapshot(y);
+
+    // when change store
+    engine.update_store();
+
 
     return <div className="component">
         <p className="title">Position</p>
@@ -25,8 +30,15 @@ export default class Position {
 
         this.x = proxy({val : x});
         this.y = proxy({val : y});
+        
         this.renderer = () => PositionComponent(this,this.x,this.y);
     }
+
+    load(data) {
+        this.x.val = data.x;
+        this.y.val = data.y;
+    }
+
 
     code() {
         return {

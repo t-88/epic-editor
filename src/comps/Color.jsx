@@ -1,10 +1,14 @@
 import { proxy, useSnapshot } from "valtio";
+import engine from "../lib/engine";
 
 
 function ColorComponent(ref,r,g,b) {
     const r_prox = useSnapshot(r);
     const g_prox = useSnapshot(g);
     const b_prox = useSnapshot(b);
+
+    // when change store
+    engine.update_store();
 
     
     return <div className="component"> 
@@ -31,6 +35,13 @@ export default class Color {
         this.g = proxy({val : g});
         this.b = proxy({val : b});
         this.renderer = () => ColorComponent(this,this.r,this.g,this.b);
+    }
+
+
+    load(data) {
+        this.r.val = data.r;
+        this.g.val = data.g;
+        this.b.val = data.b;
     }
 
     code() {

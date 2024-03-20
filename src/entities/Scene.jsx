@@ -3,6 +3,7 @@ import Color from "../comps/Color.jsx";
 import Size from "../comps/Size.jsx";
 import engine from "../lib/engine.js";
 import Script from "../comps/Script.jsx";
+import RectEntity from "./Rect.jsx";
 
 
 function SceneEntityComponent(ref) {
@@ -36,7 +37,7 @@ function SceneEntityComponent(ref) {
 }
 export default class SceneEntity {
     constructor() {
-        
+        this.type = "scene";
         this.size = new Size(400 , 600);
         this.script = new Script("");
         this.bg_color = new Color(255,255,255);
@@ -53,7 +54,35 @@ export default class SceneEntity {
     add_entity(entity) {
         this.entities.push(entity);
     }
-    render() {
-        
+
+    static load(data) {
+        let entity =  new SceneEntity();
+        entity.size.load(data.size); 
+        entity.script.load(data.script); 
+        entity.bg_color.load(data.bg_color); 
+        for (let i = 0; i < data.children.length; i++) {
+            if(data.children[i].type == "rect") {
+                entity.entities.push(RectEntity.load(data.children[i]));
+            } else {
+                alert("[LOAD FROM LOCAL STORAGE] unkown type :(");
+            }
+        }
+
+        return entity;
+    }
+
+    code() {
+        let  entity = {
+            type : this.type,
+            size : this.size.code(),
+            bg_color : this.bg_color.code(), 
+            script : this.script.code(), 
+            children : [],
+        };
+        for (let i = 0; i < this.entities.length; i++) {
+            entity.children.push(this.entities[i].code());
+        }
+
+        return entity;
     }
 }
