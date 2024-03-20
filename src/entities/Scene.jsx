@@ -42,6 +42,8 @@ export default class SceneEntity {
         this.script = new Script("");
         this.bg_color = new Color(255,255,255);
         this.entities = proxy([]);
+
+        this.skipable_components = ["Position"];
         this.comps = [
             this.size,
             this.bg_color,
@@ -50,10 +52,13 @@ export default class SceneEntity {
         this.renderer = () => SceneEntityComponent(this);
     }
 
-
+    add_component(type) {
+        if(this.skipable_components.includes(type)) return;
+    }
     add_entity(entity) {
         this.entities.push(entity);
     }
+
 
     static load(data) {
         let entity =  new SceneEntity();

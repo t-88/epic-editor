@@ -54,6 +54,10 @@ export default class RectEntity {
         this.renderer = () => RectEntityComponent(this,this.pos,this.size,this.color);
     }
 
+    add_component(type) {
+        console.log(type);
+    }
+
     static load(data) {
         let entity = new RectEntity();
         entity.pos.load(data.pos); 

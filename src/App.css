@@ -211,19 +211,21 @@ html ,body {
   font-weight: bold;
   margin: 5px;
 }
-#options-menu * { 
-  padding: 0;
+.menu-button { 
   margin: 0;
-}
-
-#options-menu p { 
   padding: 8px;
   cursor: pointer;
   border-radius: 5px;
+  display: inline;
+  font-weight: bold;
 } 
-#options-menu p:hover { 
+.menu-button:hover { 
   background-color: #252525;
 }
+.menu-button:active { 
+  background-color: #303030;
+}
+
 
 #selection-list-hierachy {
   background-color: #101010; 
@@ -247,4 +249,11 @@ html ,body {
 }
 .hierachy-element p:hover { 
   font-weight: bold;
+}
+#add-component-btn {
+  margin: 20px 0 ;
+}
+
+#add-component-btn .menu-button {
+  border: solid 2px rgba(255, 255, 255, 0.1);
 }

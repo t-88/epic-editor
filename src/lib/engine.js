@@ -136,6 +136,11 @@ class Engine {
         localStorage.setItem("saved-scene",JSON.stringify(this.active_scene.val.code()));
     }
 
+
+    add_component(type) {
+        this.hide_popup_menu();
+        this.selected_entity.val.add_component(type);
+    }
     //TODO: generate code 
     // generate_code()  {
     //     let entities = [];

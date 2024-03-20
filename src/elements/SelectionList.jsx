@@ -73,7 +73,7 @@ export default function SelectionList() {
       <div id="selection-list">
         <div id="options-menu">
           {options.map((option,idx) => {
-            return <p key={idx} onClick={(e) => option.on_click(e)}>{option.title}</p>
+            return <p className="menu-button" key={idx} onClick={(e) => option.on_click(e)}>{option.title}</p>
           })}
         </div>
 
