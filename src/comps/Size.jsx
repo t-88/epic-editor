@@ -24,20 +24,18 @@ function SizeComponent(ref,w,h) {
 
 export default  class Size {
     constructor(w = 0, h = 0) {
-        this.name = "size";
+        this.type = "size";
 
         this.w = proxy({val : w});
         this.h = proxy({val : h});
         this.renderer = () => SizeComponent(this,this.w,this.h);
     }
-
-    load(data) {
-        this.w.val = data.w;
-        this.h.val = data.h;
+    static load(data) {
+        return new Size(data.w,data.h);
     }
-
     code() {
         return {
+            type: this.type,
             w : this.w.val,
             h : this.h.val,
         }

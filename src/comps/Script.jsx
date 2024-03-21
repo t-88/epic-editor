@@ -71,18 +71,20 @@ function ScriptComponent(ref) {
     </div>
 }
 export default class Script {
-    constructor(script = "") {
-        this.name = "script";
+    constructor(scripts = []) {
+        this.type = "script";
         this.scripts = proxy([])
         this.renderer = () => ScriptComponent(this);
     }
 
-    load(data) {
-        this.scripts = proxy([...data]);
+    static load(data) {
+        return new Script(data);
     }
 
     code() {
-        return [...this.scripts];
+
+
+        return {type : this.type, scrpit: this.scripts};
     }
 
 }

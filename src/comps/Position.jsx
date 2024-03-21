@@ -25,8 +25,7 @@ function PositionComponent(ref,x,y) {
 }
 export default class Position {
     constructor(x = 0, y = 0) {
-        this.name = "pos";
-
+        this.type = "pos";
 
         this.x = proxy({val : x});
         this.y = proxy({val : y});
@@ -34,14 +33,14 @@ export default class Position {
         this.renderer = () => PositionComponent(this,this.x,this.y);
     }
 
-    load(data) {
-        this.x.val = data.x;
-        this.y.val = data.y;
-    }
 
+    static load(data) {
+        return new Position(data.x,data.y);
+    }
 
     code() {
         return {
+            type : this.type,
             x : this.x.val,
             y : this.y.val,
         }

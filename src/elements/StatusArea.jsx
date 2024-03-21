@@ -27,13 +27,15 @@ function AddComponenetBtn() {
 
 export default function StatusArea() {
   const selected_entity = useSnapshot(engine.selected_entity);
+
     return (
       <div id="status-area">
         <p id="status-area-title"><b>Inspector</b></p>        
         {
             !selected_entity.val ? 
             <></>  : 
-                selected_entity.val.comps.map((comp,idx) => {
+                Object.keys(selected_entity.val.comps).map((key,idx) => {
+                    let comp = selected_entity.val.comps[key];
                     return <comp.renderer key={idx}/>;
                 })
         }

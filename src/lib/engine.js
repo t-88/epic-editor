@@ -6,8 +6,7 @@ import PopupMenu from "../elements/PopupMenu";
 
 
 
-
-
+// TODO: generate code 
 class Engine {
     constructor() {
         this.active_scene = undefined;
@@ -55,12 +54,10 @@ class Engine {
         }
     }
     load_from_local_storage() {
-        this.active_scene = proxy({val: undefined});
-        if(!localStorage.getItem("saved-scene")) {
-            this.active_scene.val =  new SceneEntity(); 
-            return;
-        }
-        this.active_scene.val = SceneEntity.load(JSON.parse(localStorage.getItem("saved-scene")));
+        this.active_scene = proxy({val: new SceneEntity()});
+        if(!localStorage.getItem("saved-scene")) { return; }
+        console.log("loading: ",JSON.parse(localStorage.getItem("saved-scene")));
+        this.active_scene.val.load(JSON.parse(localStorage.getItem("saved-scene")));
     }
 
 
@@ -124,45 +121,22 @@ class Engine {
         this.code_editor_pos.y = y;
     }
 
-
     mouse_move(e) {
         if(!this.dragged_entity_info.entity.val || !this.mouse_down) return;
-        this.dragged_entity_info.entity.val.pos.x.val = Math.round(e.clientX - this.canvas_rect.x - this.dragged_entity_info.offset.x);
-        this.dragged_entity_info.entity.val.pos.y.val = Math.round(e.clientY - this.canvas_rect.y - this.dragged_entity_info.offset.y);
+        this.dragged_entity_info.entity.val.comps.pos.x.val = Math.round(e.clientX - this.canvas_rect.x - this.dragged_entity_info.offset.x);
+        this.dragged_entity_info.entity.val.comps.pos.y.val = Math.round(e.clientY - this.canvas_rect.y - this.dragged_entity_info.offset.y);
     }
-
 
     update_store() {
         localStorage.setItem("saved-scene",JSON.stringify(this.active_scene.val.code()));
+        // console.log(JSON.parse(localStorage.getItem("saved-scene")))
     }
-
 
     add_component(type) {
         this.hide_popup_menu();
         this.selected_entity.val.add_component(type);
     }
-    //TODO: generate code 
-    // generate_code()  {
-    //     let entities = [];
-    //     for (let i = 0; i < this.entities.length; i++) {
-    //         let entity = {};
-    //         for (let j = 0; j < this.entities[i].comps.length; j++) {
-    //             const comp = this.entities[i].comps[j];
-    //             entity[comp.name] = comp.code();
-    //         }
-    //         entities.push(entity)
-    //     }
 
-    //     let src = {
-    //         entities : entities,
-    //     }
-
-    //     fetch("http://127.0.0.1:5000/py",{
-    //         method: "POST",
-    //         headers: {"Content-Type": "application/json"},
-    //         body: JSON.stringify(src),
-    //     });
-    // }
 }
 
 

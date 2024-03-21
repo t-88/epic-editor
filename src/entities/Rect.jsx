@@ -4,22 +4,23 @@ import Size from "../comps/Size.jsx";
 import engine from "../lib/engine.js";
 import Script from "../comps/Script.jsx";
 import Color from "../comps/Color.jsx";
+import Entity from "./Entity.jsx";
 
 
-function RectEntityComponent(ref,pos,size,color) {
+function RectEntityComponent(ref) {
     const pos_prox =  {
-        x : useSnapshot(pos.x),
-        y : useSnapshot(pos.y)
+        x : useSnapshot(ref.comps["pos"].x),
+        y : useSnapshot(ref.comps["pos"].y)
     };
     const size_prox =  {
-        w : useSnapshot(size.w),
-        h : useSnapshot(size.h)
+        w : useSnapshot(ref.comps["size"].w),
+        h : useSnapshot(ref.comps["size"].h)
     };
 
     const color_prox =  {
-        r : useSnapshot(color.r),
-        g : useSnapshot(color.g),
-        b : useSnapshot(color.b),
+        r : useSnapshot(ref.comps["color"].r),
+        g : useSnapshot(ref.comps["color"].g),
+        b : useSnapshot(ref.comps["color"].b),
     };    
 
 
@@ -38,44 +39,20 @@ function RectEntityComponent(ref,pos,size,color) {
         background : `rgb(${color_prox.r.val},${color_prox.g.val},${color_prox.b.val})`
     }}></div>
 }
-export default class RectEntity {
+
+export default class RectEntity extends Entity {
     constructor() {
+        super();
         this.type = "rect";
-        this.pos =  new Position(50,50);
-        this.size = new Size(10 , 10);
-        this.color = new Color(255,0,0);
-        this.script = new Script("");
-        this.comps = [
-            this.pos,
-            this.size,
-            this.color,
-            this.script,
-        ]
-        this.renderer = () => RectEntityComponent(this,this.pos,this.size,this.color);
-    }
-
-    add_component(type) {
-        console.log(type);
-    }
-
-    static load(data) {
-        let entity = new RectEntity();
-        entity.pos.load(data.pos); 
-        entity.size.load(data.size); 
-        entity.color.load(data.color); 
-        entity.script.load(data.script);
-        return entity;
-    }
-
-    code() {
-        let  entity = {
-            type : this.type,
-            pos : this.pos.code(), 
-            size : this.size.code(), 
-            color : this.color.code(), 
-            script : this.script.code(), 
+        this.comps = {
+            pos: new Position(0,0),
+            size: new Size(50,50),
+            color: new Color(125,125,125),
+            script: new Script(),
         };
-        return entity;        
+        this.renderer = () => RectEntityComponent(this);
     }
+
+
 
 }

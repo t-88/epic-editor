@@ -4,17 +4,18 @@ import Size from "../comps/Size.jsx";
 import engine from "../lib/engine.js";
 import Script from "../comps/Script.jsx";
 import RectEntity from "./Rect.jsx";
+import Entity  from "./Entity.jsx";
 
 
 function SceneEntityComponent(ref) {
     const size_prox =  {
-        w : useSnapshot(ref.size.w),
-        h : useSnapshot(ref.size.h),
+        w : useSnapshot(ref.comps.size.w),
+        h : useSnapshot(ref.comps.size.h),
     };
-    const bg_color_prox =  {
-        r : useSnapshot(ref.bg_color.r),
-        g : useSnapshot(ref.bg_color.g),
-        b : useSnapshot(ref.bg_color.b),
+    const color_prox =  {
+        r : useSnapshot(ref.comps.color.r),
+        g : useSnapshot(ref.comps.color.g),
+        b : useSnapshot(ref.comps.color.b),
     };
 
 
@@ -25,7 +26,7 @@ function SceneEntityComponent(ref) {
     }} className="scene-entity" style={{
         width :  `${size_prox.w.val}px`, 
         height : `${size_prox.h.val}px`, 
-        background : `rgb(${bg_color_prox.r.val},${bg_color_prox.g.val},${bg_color_prox.b.val})`
+        background : `rgb(${color_prox.r.val},${color_prox.g.val},${color_prox.b.val})`
     }}>
         {
             entities.map((entity,idx) => {
@@ -35,21 +36,21 @@ function SceneEntityComponent(ref) {
 
     </div>
 }
-export default class SceneEntity {
+export default class SceneEntity extends Entity {
     constructor() {
+        super();
+
         this.type = "scene";
-        this.size = new Size(400 , 600);
-        this.script = new Script("");
-        this.bg_color = new Color(255,255,255);
         this.entities = proxy([]);
+        this.comps = {
+            "size": new Size(400 , 600),
+            "color": new Color(255,255,255),
+            "script": new Script([]),
+        };
+        this.renderer = () => SceneEntityComponent(this);
+
 
         this.skipable_components = ["Position"];
-        this.comps = [
-            this.size,
-            this.bg_color,
-            this.script,
-        ]
-        this.renderer = () => SceneEntityComponent(this);
     }
 
     add_component(type) {
@@ -60,34 +61,31 @@ export default class SceneEntity {
     }
 
 
-    static load(data) {
-        let entity =  new SceneEntity();
-        entity.size.load(data.size); 
-        entity.script.load(data.script); 
-        entity.bg_color.load(data.bg_color); 
+    load(data) {
+        super.load(data);
+
         for (let i = 0; i < data.children.length; i++) {
             if(data.children[i].type == "rect") {
-                entity.entities.push(RectEntity.load(data.children[i]));
+                let rect = new RectEntity();
+                rect.load(data.children[i]);
+                this.entities.push(rect);
             } else {
                 alert("[LOAD FROM LOCAL STORAGE] unkown type :(");
             }
         }
-
-        return entity;
     }
 
     code() {
-        let  entity = {
-            type : this.type,
-            size : this.size.code(),
-            bg_color : this.bg_color.code(), 
-            script : this.script.code(), 
-            children : [],
-        };
+        let entity = super.code();
+
+        let children = [];
         for (let i = 0; i < this.entities.length; i++) {
-            entity.children.push(this.entities[i].code());
+            children.push(this.entities[i].code());
         }
 
-        return entity;
+        return {
+            ...entity,
+            children,
+        };
     }
 }

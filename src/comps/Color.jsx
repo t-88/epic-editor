@@ -29,7 +29,7 @@ function ColorComponent(ref,r,g,b) {
 }
 export default class Color {
     constructor(r = 0, g = 0, b = 0) {
-        this.name = "color";
+        this.type = "color";
 
         this.r = proxy({val : r});
         this.g = proxy({val : g});
@@ -38,14 +38,14 @@ export default class Color {
     }
 
 
-    load(data) {
-        this.r.val = data.r;
-        this.g.val = data.g;
-        this.b.val = data.b;
+
+    static load(data) {
+        return new Color(data.r,data.g,data.b);
     }
 
     code() {
         return {
+            type : this.type,
             r : this.r.val,
             g : this.g.val,
             b : this.b.val,
