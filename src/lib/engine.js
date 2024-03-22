@@ -56,7 +56,7 @@ class Engine {
     load_from_local_storage() {
         this.active_scene = proxy({val: new SceneEntity()});
         if(!localStorage.getItem("saved-scene")) { return; }
-        console.log("loading: ",JSON.parse(localStorage.getItem("saved-scene")));
+
         this.active_scene.val.load(JSON.parse(localStorage.getItem("saved-scene")));
     }
 
@@ -129,12 +129,18 @@ class Engine {
 
     update_store() {
         localStorage.setItem("saved-scene",JSON.stringify(this.active_scene.val.code()));
-        // console.log(JSON.parse(localStorage.getItem("saved-scene")))
     }
 
     add_component(type) {
         this.hide_popup_menu();
         this.selected_entity.val.add_component(type);
+    }
+
+
+    reset_local_storage() {
+        localStorage.clear();
+        this.active_scene.val = new SceneEntity();
+        this.selected_entity.val = this.active_scene.val; 
     }
 
 }

@@ -2,22 +2,53 @@ import Position from "../comps/Position.jsx";
 import Size from "../comps/Size.jsx";
 import Script from "../comps/Script.jsx";
 import Color from "../comps/Color.jsx";
-import {COMP_MAP} from "../lib/consts.js";
+import COMP_MAP from "../lib/COMP_MAP.js";
+import { proxy, useSnapshot } from "valtio";
+import { COMP_POS } from "../lib/consts.js";
+import { watch } from 'valtio/utils'
 
 
+
+function Entity({self,jsx_props,children =[]}) {
+    let style_props = {};
+    let prox_store = [];
+    for (let comp_type in self.comps) {
+        let proxy_list = self.comps[comp_type].proxy_list();
+        for (let i = 0; i < proxy_list.length; i++) {
+            prox_store.push(proxy_list[i]);
+        }
+        style_props = {...style_props,...self.comps[comp_type].get_style_props()}
+    }
+
+    // for start update
+    useSnapshot(proxy(prox_store));
+
+    return  <div {...jsx_props}  style={{...style_props,position: Object.keys(style_props).includes("left") ?  "absolute" : "relative"}}>
+        { children.map((entity,idx) => <entity.renderer key={idx}/>)}
+    </div>
+}
 
 export default class Enitity {
     constructor() {
         this.type = "";
         this.comps = {};
-        this.renderer = () => <></>;
+        this.ignored_comps = [];
+        this.base_renderer = ({self,jsx_props,children}) => Entity({self,jsx_props,children});
+        this.renderer = () => this.base_renderer(this,{});
     }
 
-    add_component(type) {}
+    add_component(type) {
+        if(Object.keys(this.comps).includes(type) || this.ignored_comps.includes(type)) {
+            return;
+        }
+        this.comps[type] = new COMP_MAP[type]();
+    }
     load(data) {
         for (let i = 0; i < Object.keys(data.comps).length; i++) {
-            this.comps[data.comps[Object.keys(data.comps)[i]].type] = COMP_MAP[data.comps[Object.keys(data.comps)[i]].type].load(data.comps[Object.keys(data.comps)[i]]);
+            this.comps[data.comps[Object.keys(data.comps)[i]].type] = new COMP_MAP[data.comps[Object.keys(data.comps)[i]].type];
+            this.comps[data.comps[Object.keys(data.comps)[i]].type].load(data.comps[Object.keys(data.comps)[i]]);
         }
+        this.renderer = () => this.base_renderer(this,{});
     }
 
     code() {

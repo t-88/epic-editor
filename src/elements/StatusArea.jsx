@@ -1,13 +1,15 @@
 import { useSnapshot } from "valtio";
 import engine from "../lib/engine";
+import { COMP_COLOR, COMP_ID, COMP_POS, COMP_SCRIPT, COMP_SIZE } from "../lib/consts";
 
 function AddComponenetBtn() {
 
   const menu_data = [
-    { title: "Position", callback: () => {engine.add_component("Position");}},
-    { title: "Size", callback:     () => {engine.add_component("Size");}},
-    { title: "Color", callback:    () => {engine.add_component("Color");}},
-    { title: "Script", callback:   () => {engine.add_component("Script");}},
+    { title: "Position", callback: () => {engine.add_component(COMP_POS);}},
+    { title: "Size", callback:     () => {engine.add_component(COMP_SIZE);}},
+    { title: "Color", callback:    () => {engine.add_component(COMP_COLOR);}},
+    { title: "Script", callback:   () => {engine.add_component(COMP_SCRIPT);}},
+    { title: "Id", callback:       () => {engine.add_component(COMP_ID);}},
   ];
 
   return <center id="add-component-btn" >

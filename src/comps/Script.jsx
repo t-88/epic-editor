@@ -77,8 +77,16 @@ export default class Script {
         this.renderer = () => ScriptComponent(this);
     }
 
-    static load(data) {
-        return new Script(data);
+    proxy_list() {
+        return [this.scripts];
+    }
+
+    
+    get_style_props() {
+        return {};
+    }
+    load(data) {
+        this.scripts.val = data;
     }
 
     code() {

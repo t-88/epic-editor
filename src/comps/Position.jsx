@@ -33,9 +33,22 @@ export default class Position {
         this.renderer = () => PositionComponent(this,this.x,this.y);
     }
 
+    proxy_list() {
+        return [this.x,this.y];
+    }
 
-    static load(data) {
-        return new Position(data.x,data.y);
+    get_style_props() {
+        return {
+            left :   `${this.x.val}px` , 
+            top :    `${this.y.val}px` , 
+    
+        };
+    }
+
+
+    load(data) {
+        this.x.val = data.x;
+        this.y.val = data.y;
     }
 
     code() {

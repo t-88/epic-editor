@@ -1,5 +1,7 @@
+import { useSnapshot } from "valtio";
 import RectEntity from "../entities/Rect";
 import SceneEntity from "../entities/Scene";
+import { COMP_ID } from "../lib/consts";
 import engine from "../lib/engine";
 import HierachyElement from "../ui/hierachy_element";
 export default function SelectionList() {
@@ -35,8 +37,7 @@ export default function SelectionList() {
       {
         title: "Reset",
         on_click : (e) => {
-          engine.update_store();
-          // engine.generate_code();
+          engine.reset_local_storage();
         } 
       }      
 
@@ -47,26 +48,24 @@ export default function SelectionList() {
     function generate_hierachy(node , hierachy_map = [],depth = 0) {
       if(node == undefined) return;
 
-      if(node.val instanceof SceneEntity) {
-        hierachy_map.push(
-          {
-            title : "Scene",
-            depth: depth,
-            entity : node.val,
-          }
-        );        
-        for (let i = 0; i < node.val.entities.length; i++) {
-          generate_hierachy(node.val.entities[i],hierachy_map,depth + 1);          
+      let entity = {
+        title : !Object.keys(node.comps).includes(COMP_ID) ? "Rectangle" : node.comps[COMP_ID].id.val,
+        depth: depth,
+        entity : node,
+      };
+      if(Object.keys(node.comps).includes(COMP_ID)) {
+        useSnapshot(node.comps[COMP_ID].id);
+      }
+
+      if(node instanceof SceneEntity) {
+        hierachy_map.push( {...entity});        
+        for (let i = 0; i < node.entities.length; i++) {
+          generate_hierachy(node.entities[i],hierachy_map,depth + 1);          
         }
       } else if(node instanceof RectEntity) {
-        hierachy_map.push(
-          {
-            title : "Rectangle",
-            depth: depth,
-            entity : node,
-          }
-        );
+        hierachy_map.push( {...entity});        
       }
+
     }
 
     return (
@@ -83,7 +82,7 @@ export default function SelectionList() {
           {
             (()=>{
               const hierachy_map = [];
-              generate_hierachy(engine.active_scene,hierachy_map);
+              generate_hierachy(engine.active_scene.val,hierachy_map);
               return hierachy_map.map((item,idx) => {
                 return <HierachyElement key={idx}  entity={item.entity} title={item.title} depth={item.depth}/>
               })  

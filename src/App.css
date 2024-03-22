@@ -70,6 +70,11 @@ html ,body {
   height: min-content;
   text-align: center;
 }
+.expanded-input input {
+  width: 100%;
+  text-align: start;
+  margin: 0 10px;
+}
 
 
 .component {
@@ -256,4 +261,9 @@ html ,body {
 
 #add-component-btn .menu-button {
   border: solid 2px rgba(255, 255, 255, 0.1);
+}
+
+
+.scene-entity {
+  overflow: hidden;
 }

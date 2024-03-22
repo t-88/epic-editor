@@ -30,9 +30,25 @@ export default  class Size {
         this.h = proxy({val : h});
         this.renderer = () => SizeComponent(this,this.w,this.h);
     }
-    static load(data) {
-        return new Size(data.w,data.h);
+    proxy_list() {
+        return [this.w,this.h];
     }
+    
+    load(data) {
+        this.w.val = data.w;
+        this.h.val = data.h;
+    }
+
+
+
+    get_style_props() {
+        return {
+            width :  `${this.w.val}px`, 
+            height : `${this.h.val}px`, 
+        };
+    }
+
+
     code() {
         return {
             type: this.type,

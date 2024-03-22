@@ -1,14 +1,11 @@
-import Color from "../comps/Color";
-import Position from "../comps/Position";
-import Script from "../comps/Script";
-import Size from "../comps/Size";
 
-const  COMP_MAP = {
-    "pos": Position,
-    "size": Size,
-    "color": Color,
-    "script": Script,
-};
 
-export {
-    COMP_MAP};
+
+
+const COMP_POS = "pos";
+const COMP_SIZE = "size";
+const COMP_COLOR = "color";
+const COMP_SCRIPT = "script";
+const COMP_ID = "id";
+
+export {COMP_POS, COMP_SIZE, COMP_COLOR,COMP_SCRIPT,COMP_ID};

@@ -10,7 +10,6 @@ function ColorComponent(ref,r,g,b) {
     // when change store
     engine.update_store();
 
-    
     return <div className="component"> 
     <p className="title">Color</p>
 
@@ -34,13 +33,24 @@ export default class Color {
         this.r = proxy({val : r});
         this.g = proxy({val : g});
         this.b = proxy({val : b});
+
+        
         this.renderer = () => ColorComponent(this,this.r,this.g,this.b);
     }
 
+    proxy_list() {
+        return [this.r,this.g,this.b];
+    }
 
-
-    static load(data) {
-        return new Color(data.r,data.g,data.b);
+    get_style_props() {
+        return {
+           background : `rgb(${this.r.val},${this.g.val},${this.b.val})`
+        };
+    }
+    load(data) {
+        this.r.val = data.r;
+        this.g.val = data.g;
+        this.b.val = data.b;
     }
 
     code() {
