@@ -267,3 +267,12 @@ html ,body {
 .scene-entity {
   overflow: hidden;
 }
+
+.storage-input {
+  gap: 20px;
+  margin: 10px 20px;
+}
+.storage-input input {
+  width: 100%;
+  text-align: start;
+}

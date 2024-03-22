@@ -1,6 +1,6 @@
 import { useSnapshot } from "valtio";
 import engine from "../lib/engine";
-import { COMP_COLOR, COMP_ID, COMP_POS, COMP_SCRIPT, COMP_SIZE } from "../lib/consts";
+import { COMP_COLOR, COMP_ID, COMP_POS, COMP_SCRIPT, COMP_SIZE, COMP_STORAGE } from "../lib/consts";
 
 function AddComponenetBtn() {
 
@@ -10,6 +10,7 @@ function AddComponenetBtn() {
     { title: "Color", callback:    () => {engine.add_component(COMP_COLOR);}},
     { title: "Script", callback:   () => {engine.add_component(COMP_SCRIPT);}},
     { title: "Id", callback:       () => {engine.add_component(COMP_ID);}},
+    { title: "Storage", callback:       () => {engine.add_component(COMP_STORAGE);}},
   ];
 
   return <center id="add-component-btn" >

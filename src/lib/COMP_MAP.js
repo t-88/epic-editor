@@ -3,6 +3,7 @@ import Position from "../comps/Position";
 import Script from "../comps/Script";
 import Size from "../comps/Size";
 import Id from "../comps/Id";
+import Storage from "../comps/Storage";
 
 
 export default {
@@ -11,4 +12,5 @@ export default {
     "color": Color,
     "script": Script,
     "id": Id,
+    "storage": Storage,
 };;

@@ -49,7 +49,6 @@ export default function SelectionList() {
       if(node == undefined) return;
 
       let entity = {
-        title : !Object.keys(node.comps).includes(COMP_ID) ? "Rectangle" : node.comps[COMP_ID].id.val,
         depth: depth,
         entity : node,
       };
@@ -58,11 +57,13 @@ export default function SelectionList() {
       }
 
       if(node instanceof SceneEntity) {
+        entity.title =  !Object.keys(node.comps).includes(COMP_ID) ? "Scene" : node.comps[COMP_ID].id.val;
         hierachy_map.push( {...entity});        
         for (let i = 0; i < node.entities.length; i++) {
           generate_hierachy(node.entities[i],hierachy_map,depth + 1);          
         }
       } else if(node instanceof RectEntity) {
+        entity.title =  !Object.keys(node.comps).includes(COMP_ID) ? "Rectangle" : node.comps[COMP_ID].id.val;
         hierachy_map.push( {...entity});        
       }
 
