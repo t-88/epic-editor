@@ -4,7 +4,11 @@ import SceneEntity from "../entities/Scene";
 import { COMP_ID } from "../lib/consts";
 import engine from "../lib/engine";
 import HierachyElement from "../ui/hierachy_element";
+import { useNavigate } from "react-router-dom";
 export default function SelectionList() {
+
+  const navigate = useNavigate();
+
     const options = [
       {
         title: "Add",
@@ -28,19 +32,17 @@ export default function SelectionList() {
         } 
       },
       {
-        title: "Generate",
+        title: "Run",
         on_click : (e) => {
-          alert("wait for it, wait for it, nah. i got nothing");
-          // engine.generate_code();
+          navigate("/run");
         } 
-      },
+      },       
       {
         title: "Reset",
         on_click : (e) => {
           engine.reset_local_storage();
         } 
-      }      
-
+      },   
     ];
 
 
