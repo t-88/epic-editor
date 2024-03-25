@@ -25,7 +25,6 @@ export default class SceneEntity extends Entity {
 
     render(ctx) {
         for (let i = 0; i < this.entities.length; i++) {
-            console.log(this.entities[i])
             this.entities[i].render(ctx);
         }
     } 

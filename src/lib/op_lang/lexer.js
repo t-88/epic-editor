@@ -162,3 +162,6 @@ export default class Lexer extends BaseParser {
         return this.tokens
     }
 }
+
+
+export { TokenType }

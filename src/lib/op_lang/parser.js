@@ -1,4 +1,6 @@
-    
+import BaseParser from "./base_parser"
+import Lexer, { TokenType } from "./lexer"
+
 
 
 let StatementType = { 
@@ -13,7 +15,6 @@ let StatementType = {
     "Block":"Block", 
     "Conditional":"Conditional",
     "ForIteration":"ForIteration",
-    
     // key nodes
     "Program":"Program",
     "FuncCall":"FuncCall",
@@ -49,7 +50,7 @@ class ExprProgram extends Statement {
     }
 }
 class ExprArithOp extends Statement {
-    constructor(left,right,exp) {
+    constructor(op,left,right) {
         super(StatementType.ArthOp);
         this.left = left                
         this.right = right    
@@ -58,7 +59,7 @@ class ExprArithOp extends Statement {
 }
        
 class ExprBoolOp extends Statement {
-    constructor(left,right,op) {
+    constructor(op,left,right) {
         super(StatementType.BooleanOp);
         this.left = left                
         this.right = right    
@@ -132,11 +133,11 @@ class StatTableLookup extends Statement {
 }
 
 
-class OPParser extends BaseParser {
+export default class OPParser extends BaseParser {
     constructor() {
         super()
         this.program = undefined
-        this.lexer = Lexer()
+        this.lexer = new Lexer()
         this.src = []
     }
         
@@ -144,6 +145,8 @@ class OPParser extends BaseParser {
         if(this.cur().type != typ) {
             console.log(this.program.statements)
             console.log(this.idx)
+            console.log(this.src.slice(this.idx))
+
             console.log(`[Parser Expect Error] expected ${typ} got ${this.cur().type}`)
             throw(`[Parser Expect Error] expected ${typ} got ${this.cur().type}`)
         }
@@ -209,7 +212,7 @@ class OPParser extends BaseParser {
           
     
     parse_func_call() {
-        if (this.cur().type == TokenType.Identifier && this.cur(1).type == TokenType.OPara && this.cur().type == TokenType.Outer_Func) {
+        if ((this.cur().type == TokenType.Identifier && this.cur(1).type == TokenType.OPara) || this.cur().type == TokenType.Outer_Func) {
             let name = this.next().val
             this.expect(TokenType.OPara)
             this.next()
@@ -241,7 +244,7 @@ class OPParser extends BaseParser {
         this.expect(TokenType.OPara)
         this.next()
         
-        args = []
+        let args = []
         while(this.cur().type != TokenType.CPara) {
             args.push(this.parse_literal().val)
             if(this.cur().type != TokenType.CPara) {
@@ -266,24 +269,24 @@ class OPParser extends BaseParser {
                 name += this.cur(i).val + this.cur(i + 1).val
                 i += 2
             }
-
             if(this.idx < this.src.length && this.cur(i).type == TokenType.Equal) {
                 for (let j = 0; j < i; j++) {
                     this.next()
                 }
                 this.next()
-                val = this.parse_func_call()
+                let val = this.parse_func_call()
+                return new StatVarAssigment(name,val)
             }
 
-            return new StatVarAssigment(name,val)
         }
+
 
         return this.parse_boolean_ops()
     }
 
     parse_boolean_ops() {
         let left = this.parse_addition_subtraction()
-        while (this.idx < this.src.length && this.cur().type in [TokenType.Equality,TokenType.Bigger, TokenType.BiggerOrEqual,TokenType.Lesser,TokenType.LesserOrEqual]) {
+        while (this.idx < this.src.length && [TokenType.Equality,TokenType.Bigger, TokenType.BiggerOrEqual,TokenType.Lesser,TokenType.LesserOrEqual].includes(this.cur().type )) {
             let op = this.next().val
             let right = this.parse_addition_subtraction()
             left =  new ExprBoolOp(op,left,right)        
@@ -293,8 +296,9 @@ class OPParser extends BaseParser {
                
     parse_addition_subtraction() {
         let left = this.parse_muliplication()
+
         
-        while(this.idx < this.src.length && this.cur().type in  [TokenType.Add , TokenType.Minus]) {
+        while(this.idx < this.src.length &&  [TokenType.Add , TokenType.Minus].includes(this.cur().type)) {
             let op = this.next().val
             let right = this.parse_muliplication()
             left =  new ExprArithOp(op,left,right)        
@@ -328,7 +332,7 @@ class OPParser extends BaseParser {
    
     
     parse_dot_notation() {
-        if (this.cur().type == TokenType.Identifier && this.cur().val in LOOKUP_TABLES && this.cur(1).type == TokenType.Dot) {
+        if (this.cur().type == TokenType.Identifier &&  LOOKUP_TABLES.includes(this.cur().val ) && this.cur(1).type == TokenType.Dot) {
             let table =  this.next().val
             this.next()
             this.expect(TokenType.Identifier)
@@ -370,7 +374,7 @@ class OPParser extends BaseParser {
             return undefined
         }
         else {
-            print(`[Parser Error] Unexpected literal '${tkn}'`)
+            console.log(`[Parser Error] Unexpected literal '${tkn}'`)
             throw(`[Parser Error] Unexpected literal '${tkn}'`)
         }
     }
@@ -378,80 +382,83 @@ class OPParser extends BaseParser {
  
     print_tree(node = undefined,depth = 0) {
         if(node == undefined) {
+            if(depth != 0) {
+                return
+            }
             this.print_tree(this.program)
             return 
         } 
 
-        let sep = "  " * depth
+        let sep =  "  ".repeat(depth)
         if(node.type == StatementType.Program) {
-            print("program")
+            console.log("program")
             for (let i = 0; i < node.statements.length; i++) {
                 this.print_tree(node.statements[i],depth + 1)
             }
         }
         else if (node.type == StatementType.String)
-            print(sep +  "string " + node.val)
+            console.log(sep +  "string " + node.val)
         else if (node.type == StatementType.Number)
-            print(sep + "number " + node.val)
+            console.log(sep + "number " + node.val)
         else if (node.type == StatementType.Identifier)
-            print(sep +  "identifier " + node.val)
+            console.log(sep +  "identifier " + node.val)
         else if (node.type == StatementType.ArthOp) {
-            print(sep + OP_MAP[node.op])
+            console.log(sep + OP_MAP[node.op])
             this.print_tree(node.left , depth + 1)
             this.print_tree(node.right, depth + 1)
         }
         else if (node.type == StatementType.BooleanOp) {
-            print(sep + OP_MAP[node.op])
+            console.log(sep + OP_MAP[node.op])
             this.print_tree(node.left , depth + 1)
             this.print_tree(node.right, depth + 1)            
         }
         else if (node.type == StatementType.VarAssigment) {
-            print(sep + "Var Assign")
-            print(sep + node.name)
+            console.log(sep + "Var Assign")
+            console.log(sep + node.name)
             this.print_tree(node.val , depth + 1)
         }
         else if (node.type == StatementType.Para) {
-            print(sep + "Para")
+            console.log(sep + "Para")
             this.print_tree(node.expr , depth + 1)            
         }
         else if (node.type == StatementType.Block) {
-            print(sep + "Block")
+            console.log(sep + "Block")
             for (let i = 0; i < node.block.length; i++) {
                 this.print_tree(node.block[i],depth + 1)
             }
         }
         else if (node.type == StatementType.Conditional) {
-            print(sep + "Conditional")
+            console.log(sep + "Conditional")
             this.print_tree(node.condition , depth + 1)                     
             this.print_tree(node.block , depth + 1) 
         }
         else if (node.type == StatementType.ForIteration) {
-            print(sep + "ForIteration")
-            this.print_tree(node.var , depth + 1)                     
+            console.log(sep + "ForIteration")
+            this.print_tree(node.variable , depth + 1)                     
             this.print_tree(node.start , depth + 1)                     
             this.print_tree(node.end , depth + 1)                     
             this.print_tree(node.block , depth + 1)                     
         }
         else if (node.type == StatementType.FuncCall) {
-            print(sep + "FuncCall")
-            print(sep + node.name)
+            console.log(sep + "FuncCall")
+            console.log(sep + node.name)
             for (let i = 0; i < node.args.length; i++) {
                 this.print_tree(node.args[i],depth + 1)
             }            
         }
         else if (node.type == StatementType.FuncDeclaration) {
-            print(sep + "FuncDeclaration")
-            print(sep + node.name)
-            print(sep + str(node.args))
+            console.log(sep + "FuncDeclaration")
+            console.log(sep + node.name)
+            console.log(sep + JSON.stringify(node.args))
             this.print_tree(node.body , depth + 1)  
         }
         else if (node.type == StatementType.TableLookup) {
-            print(sep + "TableLookup")
-            print(sep + `table: ${node.table}`)
-            print(sep + `key: ${node.key}`)
+            console.log(sep + "TableLookup")
+            console.log(sep + `table: ${node.table}`)
+            console.log(sep + `key: ${node.key}`)
         }
         else {
-            print(`[Parser Error] Unexpected node to be printed '${node}'`)
+            console.log(`[Parser Error] Unexpected node to be printed '${node}'`)
             throw(`[Parser Error] Unexpected node to be printed '${node}'`)
         }
     }
