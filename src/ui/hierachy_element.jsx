@@ -1,7 +1,11 @@
+import { proxy, useSnapshot } from "valtio";
+import { COMP_ID } from "../lib/consts";
 import engine from "../lib/engine"
 
 
-export default function HierachyElement({ entity, title, depth }) {
+export default function HierachyElement({ entity, depth }) {
+    let title = useSnapshot(entity.comps[COMP_ID]);
+
     return <div className="hierachy-element"
         onClick={(e) => {
             engine.on_entity_select(entity,e);
@@ -11,7 +15,7 @@ export default function HierachyElement({ entity, title, depth }) {
         }} >
 
         <p>
-            {title}
+            {title.id.val}
         </p>
 
     </div>

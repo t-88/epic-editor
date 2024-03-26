@@ -54,18 +54,13 @@ export default function SelectionList() {
         depth: depth,
         entity : node,
       };
-      if(Object.keys(node.comps).includes(COMP_ID)) {
-        useSnapshot(node.comps[COMP_ID].id);
-      }
 
       if(node instanceof SceneEntity) {
-        entity.title =  !Object.keys(node.comps).includes(COMP_ID) ? "Scene" : node.comps[COMP_ID].id.val;
         hierachy_map.push( {...entity});        
         for (let i = 0; i < node.entities.length; i++) {
           generate_hierachy(node.entities[i],hierachy_map,depth + 1);          
         }
       } else if(node instanceof RectEntity) {
-        entity.title =  !Object.keys(node.comps).includes(COMP_ID) ? "Rectangle" : node.comps[COMP_ID].id.val;
         hierachy_map.push( {...entity});        
       }
 
@@ -87,7 +82,7 @@ export default function SelectionList() {
               const hierachy_map = [];
               generate_hierachy(engine.active_scene.val,hierachy_map);
               return hierachy_map.map((item,idx) => {
-                return <HierachyElement key={idx}  entity={item.entity} title={item.title} depth={item.depth}/>
+                return <HierachyElement key={idx}  entity={item.entity} depth={item.depth}/>
               })  
             })()
 

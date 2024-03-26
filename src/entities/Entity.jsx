@@ -6,6 +6,7 @@ import COMP_MAP from "../lib/COMP_MAP.js";
 import { proxy, useSnapshot } from "valtio";
 import { COMP_POS } from "../lib/consts.js";
 import { watch } from 'valtio/utils'
+import Id from "../comps/Id.jsx";
 
 
 
@@ -30,8 +31,10 @@ function Entity({self,jsx_props,children =[]}) {
 
 export default class Enitity {
     constructor() {
-        this.type = "";
-        this.comps = {};
+        this.type = "Entity";
+        this.comps = {
+            id: new Id("Entity")
+        };
         this.ignored_comps = [];
         this.base_renderer = ({self,jsx_props,children}) => Entity({self,jsx_props,children});
         this.renderer = () => this.base_renderer(this,{});

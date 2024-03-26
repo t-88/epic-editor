@@ -15,7 +15,7 @@ export default class SceneEntity extends Entity {
         canvas.style.background = `rgb(${data.comps.color.r},${data.comps.color.g},${data.comps.color.b})`;
     
         for (let i = 0; i < data.children.length; i++) {
-            if(data.children[i].type == "rect") {
+            if(data.children[i].type == "Rect") {
                 this.entities.push(new Rect());
                 this.entities[this.entities.length - 1].load(data.children[i]);
             }

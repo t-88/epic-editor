@@ -9,12 +9,13 @@ import Entity from "./Entity.jsx";
 export default class RectEntity extends Entity {
     constructor() {
         super();
-        this.type = "rect";
-        this.comps = {
-            pos: new Position(0,0),
-            size: new Size(50,50),
-            color: new Color(125,125,125),
-        };
+        this.type = "Rect";
+        this.comps.pos = new Position(0,0);
+        this.comps.size =  new Size(50,50);
+        this.comps.color = new Color(125,125,125);
+
+        this.comps.id.id.val = "Rect";
+
         this.renderer = () => <this.base_renderer self={this} jsx_props={{onMouseDown:(e) => this.on_mouse_down(e)}}  />
     }
     load(data) {

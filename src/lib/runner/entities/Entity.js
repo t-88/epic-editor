@@ -3,6 +3,7 @@ import Size from "../components/Size";
 import Color from "../components/Color";
 import Script from "../components/Script";
 import runner from "../runner";
+import Id from "../../../comps/Id";
 
 
 const COMP_MAP = {
@@ -10,6 +11,7 @@ const COMP_MAP = {
     "size": Size,
     "color": Color,
     "script": Script,
+    "id": Id,
 };
 
 const shared_globals =  `
