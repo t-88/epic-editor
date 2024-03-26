@@ -86,13 +86,15 @@ export default class Script {
         return {};
     }
     load(data) {
-        this.scripts.val = data;
+        this.scripts.length = 0;
+        for (let i = 0; i < data.scripts.length; i++) {
+            this.scripts.push(data.scripts[i]);
+        }
+
     }
 
     code() {
-
-
-        return {type : this.type, scrpit: this.scripts};
+        return {type : this.type, scripts: this.scripts};
     }
 
 }

@@ -5,8 +5,24 @@ class Runner {
         this.canvas_ref = undefined;
         this.ctx = undefined;
         this.scene = undefined;
+
+        this.entities = {};
+
+        this.pressed_keys = [];
+        this.init_events();
+
     }
 
+    init_events() {
+        document.addEventListener("keydown",(e) => {
+            if(this.pressed_keys.includes(e.code)) return;
+            this.pressed_keys.push(e.code);
+        },false);
+        document.addEventListener("keyup",(e) => {
+            if(!this.pressed_keys.includes(e.code)) return;
+            this.pressed_keys.splice(this.pressed_keys.indexOf(e.code),1);
+        },false);
+    }
 
     load_app() {
         this.scene = new SceneEntity();
@@ -23,7 +39,7 @@ class Runner {
     animate() {
         this.update();
         this.render();
-        requestAnimationFrame(() => this.animate);
+        requestAnimationFrame(() => this.animate());
     }
 
 

@@ -1,4 +1,3 @@
-import { proxy, useSnapshot } from "valtio";
 import Position from "../comps/Position.jsx";
 import Size from "../comps/Size.jsx";
 import engine from "../lib/engine.js";

@@ -1,3 +1,4 @@
+import { shared_globals } from "../runner/entities/Entity";
 import { StatementType } from "./parser"
 
 
@@ -5,14 +6,11 @@ import { StatementType } from "./parser"
 export default class OPTraspiler {
     constructor() {
         this.src = ""
-        this.prefix_functions = ""
+        this.functions = {};
     }
-    transpile(node, iden = 0, prefix_functions = "") {
+    transpile(node,vars = []) {
         let src = ""
-        let identation = "\t".repeat(iden)
-
         if (node.type == StatementType.Program) {
-            this.prefix_functions = prefix_functions
             for (let i = 0; i < node.statements.length; i++) {
                 src += this.transpile(node.statements[i])
                 src += "\n"
@@ -34,26 +32,41 @@ export default class OPTraspiler {
             src = this.transpile(node.left) + " " + node.op + " " + this.transpile(node.right)
         }
         else if (node.type == StatementType.VarAssigment) {
-            src = identation + node.name + " = " + this.transpile(node.val)
+            if(!vars.includes(node.name)) {
+                vars.push(node.name);
+            }
+            src = node.name + " = " + this.transpile(node.val)
         }
         else if (node.type == StatementType.Para) {
             src = `(${this.transpile(node.expr)})`
         }
         else if (node.type == StatementType.Block) {
             src = "{"
+
+            let vars = []; 
             for (let i = 0; i < node.block.length; i++) {
-                src += this.transpile(node.block[i])
+                src += this.transpile(node.block[i],vars)
                 src += "\n"
             }
+            
+            // yes, am doing hoisting bc am too lazy 
+            let var_declaration = "";
+            for (let i = 0; i < vars.length; i++) {
+                // skip . access
+                if(vars[i].includes(".")) continue
+                var_declaration += "let " + vars[i] + ";"
+                
+            }
+            src = src.slice(0,1) + var_declaration + src.slice(1) 
             src += "}"
 
         }
         else if (node.type == StatementType.Conditional) {
-            src = identation + "if" + this.transpile(node.condition) + "\n"
-            src += this.transpile(node.block, iden + 1)
+            src = "if" + this.transpile(node.condition) + "\n"
+            src += this.transpile(node.block)
         }
         else if (node.type == StatementType.FuncCall) {
-            src = identation + node.name + "("
+            src = "this." + node.name + "("
             for (let i = 0; i < node.args.length; i++) {
                 src += this.transpile(node.args[i])
                 if (i < node.args.length - 1)
@@ -62,19 +75,23 @@ export default class OPTraspiler {
             src += ")"
         }
         else if (node.type == StatementType.ForIteration) {
-            let variable = self.transpile(node.var);
-            src = identation + `for(let ${variable} = ${this.transpile(node.start)}; ${variable} < ${this.transpile(node.end)}; ${variable}++)\n`
-            src += this.transpile(node.block, iden + 1)
+            let variable = this.transpile(node.var);
+            src = `for(let ${variable} = ${this.transpile(node.start)}; ${variable} < ${this.transpile(node.end)}; ${variable}++)\n`
+            src += this.transpile(node.block)
         }
         else if (node.type == StatementType.FuncDeclaration) {
-            src = "function " + self.prefix_functions + node.name + "("
+            src = "function " + node.name + "("
             for (let i = 0; i < node.args.length; i++) {
                 src += node.args[i]
                 if (i < node.args.length - 1)
                     src += ","
             }
             src += ")\n"
-            src += this.transpile(node.body, iden + 1)
+            let header = src;
+
+            src += this.transpile(node.body)
+            src = src.slice(0, header.length + 1) + shared_globals + src.slice(header.length + 1);
+            this.functions[node.name] = src;
         }
         else if (node.type == StatementType.TableLookup) {
             src += node.table + "["
@@ -87,3 +104,5 @@ export default class OPTraspiler {
         return src
     }
 }
+
+
