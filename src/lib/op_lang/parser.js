@@ -356,7 +356,7 @@ export default class OPParser extends BaseParser {
         }
         else if(tkn.type == TokenType.Number || tkn.type == TokenType.Minus) {
             if(tkn.type == TokenType.Minus) {
-                num = this.cur().val; this.next()
+                let num = this.cur().val; this.next()
                 return new Statement(StatementType.Number,"-"+num)
             }
             else {
