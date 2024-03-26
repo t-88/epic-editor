@@ -36,19 +36,22 @@ let OP_MAP = {
 
 let LOOKUP_TABLES = ["Components","Keys"]
 
+
+
+
 class Statement {
     constructor(typ,val = "") {
         this.type = typ
         this.val = val
     }
 }
-
 class ExprProgram extends Statement {
     constructor() {
         super(StatementType.Program);
         this.statements = []
     }
 }
+
 class ExprArithOp extends Statement {
     constructor(op,left,right) {
         super(StatementType.ArthOp);
@@ -67,18 +70,21 @@ class ExprBoolOp extends Statement {
     }
 }
 
+
 class ExprPara extends Statement {
     constructor(expr) {
         super(StatementType.Para)
         this.expr = expr                
     }
 }
+
 class StatBlock extends Statement {
     constructor(block) {
         super(StatementType.Block)
         this.block = block
     }
 }
+
 class StatVarAssigment extends Statement {
     constructor(name,val) {
         super(StatementType.VarAssigment);
@@ -86,6 +92,7 @@ class StatVarAssigment extends Statement {
         this.val = val    
     }
 }
+
 
 class StatConditional extends Statement {
     constructor(condition,block) {
@@ -309,10 +316,10 @@ export default class OPParser extends BaseParser {
     parse_muliplication() {
         let left = this.parse_para()
 
-        while (this.idx < this.src.length && (this.cur().type == TokenType.Mult && this.cur().type == TokenType.Div)) {
+        while (this.idx < this.src.length && (this.cur().type == TokenType.Mult || this.cur().type == TokenType.Div)) {
             let op = this.next().val
             let right = this.parse_para()
-            left =  ExprArithOp(op,left,right)
+            left =  new ExprArithOp(op,left,right)
         }
         return left
     }
@@ -465,7 +472,8 @@ export default class OPParser extends BaseParser {
 }      
 
 
-    
+export { StatementType}
+
 
     
 

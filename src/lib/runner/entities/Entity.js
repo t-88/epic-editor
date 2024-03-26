@@ -1,12 +1,14 @@
 import Position from "../components/Position";
 import Size from "../components/Size";
 import Color from "../components/Color";
+import Script from "../components/Script";
 
 
 const COMP_MAP = {
     "pos": Position,
     "size": Size,
     "color": Color,
+    "script": Script,
 };
 
 export default class Entity {

@@ -22,6 +22,11 @@ export default class SceneEntity extends Entity {
         }
     }
 
+    update() { 
+        for (let i = 0; i < this.entities.length; i++) {
+            this.entities[i].update();
+        }
+    }
 
     render(ctx) {
         for (let i = 0; i < this.entities.length; i++) {
