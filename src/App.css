@@ -36,6 +36,7 @@ html ,body {
   align-items: center;
   justify-content: center;
   background: #181818;
+  position: relative;
 }
 #canvas {
   background-color: white;
@@ -192,6 +193,10 @@ html ,body {
   height: 300px;
   background-color: rgb(50, 50, 150);
   border: solid white 2px;
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 #code-editor .window-bar {
   width: 100%;
@@ -202,6 +207,12 @@ html ,body {
   box-sizing: border-box;
 
   cursor: pointer;
+}
+
+#code-editor-textarea {
+  width: 100%;
+  height: 100%;
+  overflow: scroll;
 }
 
 #selection-list-title {
@@ -275,4 +286,42 @@ html ,body {
 .storage-input input {
   width: 100%;
   text-align: start;
+}
+
+
+#code-editor-area {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 100px;
+  background-color: black;
+  padding-bottom: 10px;
+
+}
+#code-editor-area .top-bar {
+  width: 100%;
+  height: 5px;
+  background-color: black;
+  cursor: ns-resize;
+}
+
+
+#code-container {
+  width: 100%;
+  height: 100%;
+}
+#code-container > div:nth-last-of-type(1) { 
+  height: 100%;
+  overflow: hidden;
+}
+
+
+
+
+.cm-scroller {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+.cm-scroller::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
 }

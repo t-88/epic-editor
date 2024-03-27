@@ -7,8 +7,9 @@ class Runner {
         this.scene = undefined;
 
         this.entities = {};
-
         this.pressed_keys = [];
+        this.is_running = false;
+
         this.init_events();
 
     }
@@ -37,6 +38,7 @@ class Runner {
 
 
     animate() {
+        if(!this.is_running || !this.scene) return;
         this.update();
         this.render();
         requestAnimationFrame(() => this.animate());
@@ -49,6 +51,17 @@ class Runner {
     render() {
         this.ctx.clearRect(0, 0, this.canvas_ref.width, this.canvas_ref.height);
         this.scene.render(this.ctx);
+    }
+
+    start() {
+        this.is_running = true;   
+        this.scene = undefined;
+        this.entities = {};
+        this.pressed_keys = [];
+    }
+    stop() {
+        this.is_running = false;   
+        this.scene = undefined;
     }
 }
 

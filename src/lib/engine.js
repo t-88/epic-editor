@@ -6,7 +6,6 @@ import PopupMenu from "../elements/PopupMenu";
 
 
 
-// TODO: generate code 
 class Engine {
     constructor() {
         this.active_scene = undefined;
@@ -35,8 +34,15 @@ class Engine {
             offset : {x: 0,y: 0,}
         }
         this.canvas_rect = { x: 0, y: 0};
-        this.events();
 
+
+        this.code_editor = proxy({
+            height : 100,
+            y_offset : 0,
+            dragged: false,
+        });
+
+        this.events();
 
     }
 
@@ -47,6 +53,7 @@ class Engine {
         document.body.onmouseup = () => {
             this.mouse_down = false;
             this.dragged_entity_info.entity.val = undefined;
+            this.code_editor.dragged = false;
         }
 
         document.body.onmousemove = (e) => {
@@ -122,9 +129,16 @@ class Engine {
     }
 
     mouse_move(e) {
-        if(!this.dragged_entity_info.entity.val || !this.mouse_down) return;
-        this.dragged_entity_info.entity.val.comps.pos.x.val = Math.round(e.clientX - this.canvas_rect.x - this.dragged_entity_info.offset.x);
-        this.dragged_entity_info.entity.val.comps.pos.y.val = Math.round(e.clientY - this.canvas_rect.y - this.dragged_entity_info.offset.y);
+        if(this.mouse_down) {
+            if(this.dragged_entity_info.entity.val) {
+                this.dragged_entity_info.entity.val.comps.pos.x.val = Math.round(e.clientX - this.canvas_rect.x - this.dragged_entity_info.offset.x);
+                this.dragged_entity_info.entity.val.comps.pos.y.val = Math.round(e.clientY - this.canvas_rect.y - this.dragged_entity_info.offset.y);
+            }
+
+            if(this.code_editor.dragged) {
+                this.code_editor.height =  window.innerHeight - e.clientY;
+            }
+        }
     }
 
     update_store() {
@@ -143,6 +157,12 @@ class Engine {
         this.selected_entity.val = this.active_scene.val; 
     }
 
+
+    code_editor_resize_grap(e) {
+        if(this.code_editor.dragged) return;
+        this.code_editor.offset = e.clientY;
+        this.code_editor.dragged = true;
+    }
 }
 
 

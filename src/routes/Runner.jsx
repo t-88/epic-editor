@@ -6,8 +6,10 @@ import { useEffect, useRef } from "react";
 export default function  Runner () {
     const canvas_ref = useRef();
 
+
     useEffect(() => { 
         runner.canvas_ref = canvas_ref.current;
+        runner.start();
         runner.load_app();
     },[]);
 

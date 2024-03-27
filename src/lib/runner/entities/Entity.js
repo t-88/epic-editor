@@ -35,13 +35,8 @@ const Keys = {
 
 
 
-
-export default class Entity {
-    constructor() {
-        this.id = crypto.randomUUID();
-        this.comps = {};
-        runner.entities[this.id] = this;
-    }
+class Functions {
+    constructor() {}
 
     is_pressed(key) {
         return runner.pressed_keys.includes(key);
@@ -62,8 +57,7 @@ export default class Entity {
     log(data) {
         console.log(data);
     }  
-
-
+   
     AABB(x1,y1,w1,h1,x2,y2,w2,h2){
         return x1 + w1 > x2 && y1 + h1 > y2 && x2 + w2 > x1 && y2 + h2 > y1
     }
@@ -71,17 +65,36 @@ export default class Entity {
         return Math.sqrt(num)
     }
 
+    randint(num) {
+        return (Math.random() * 1000) % num
+    } 
+
+    init() {
+        this.log("done")
+    }
+    clear_entities() {
+        this.log("done")
+    }
+}
+
+
+export default class Entity extends Functions {
+    constructor() {
+        super();
+        this.id = crypto.randomUUID();
+        this.comps = {};
+        runner.entities[this.id] = this;
+    }
+
+
 
     load(data) {
         for(let key in data.comps) {
             this.comps[key] = new COMP_MAP[key](data.comps[key]);
         }
     }
-
-    update() {
-    }
-    render(ctx) {
-    }    
+    update() {}
+    render(ctx) {}    
 }
 
 export {shared_globals}
