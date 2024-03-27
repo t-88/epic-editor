@@ -7,7 +7,7 @@ import Entity, { shared_globals } from "./Entity";
 export default class Rect extends Entity {
     constructor() {
         super();
-        this.on_update = (ID) => {};
+        this.on_update = (ID) => { };
         this.functions = {};
     }
 
@@ -23,14 +23,9 @@ export default class Rect extends Entity {
             transpiler.transpile(parser.program);
             this.functions = transpiler.functions;
 
-            // console.log(eval("(" + this.functions["on_update"] + ")"));
-
-            if(this.functions["on_update"]) {
+            if (this.functions["on_update"]) {
                 this.on_update = eval("(" + this.functions["on_update"] + ")");
             }
-
-
-
         }
     }
 
