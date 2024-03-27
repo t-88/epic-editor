@@ -7,25 +7,12 @@ import Entity, { shared_globals } from "./Entity";
 export default class Rect extends Entity {
     constructor() {
         super();
-        this.on_update = (ID) => { };
-        this.functions = {};
     }
 
 
     load(data) {
         super.load(data);
-        if (this.comps.script) {
-            let parser = new OPParser();
-            parser.parse(this.comps.script.script)
-            let transpiler = new OPTraspiler();
-
-            transpiler.transpile(parser.program);
-            this.functions = transpiler.functions;
-
-            if (this.functions["on_update"]) {
-                this.on_update = eval("(" + this.functions["on_update"] + ")");
-            }
-        }
+        
     }
 
 

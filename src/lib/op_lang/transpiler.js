@@ -1,4 +1,4 @@
-import { shared_globals } from "../runner/entities/Entity";
+import shared_globals from "../runner/utils/globals";
 import { StatementType } from "./parser"
 
 

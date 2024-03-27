@@ -13,7 +13,7 @@ function StorageComponent(ref) {
 
     return <div className="component">
         <section className="title-icon">
-            <p>Map</p>
+            <p>Storage</p>
             <img
                 src={add_icon} width={25} height={25}
                 onClick={() => {

@@ -6,7 +6,7 @@ import CodeMirror from "@uiw/react-codemirror";
 export default function CodeEditor() {
     const script_prox = useSnapshot(engine.cur_script_prox);
     
-    return <CodeMirror
+    return  <CodeMirror
         editable={script_prox.val != undefined}
         theme={"dark"}
         value={script_prox.val == undefined ? "" : script_prox.val.script.val}

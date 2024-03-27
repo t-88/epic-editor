@@ -1,13 +1,16 @@
-import { useSnapshot } from "valtio";
 import RectEntity from "../entities/Rect";
 import SceneEntity from "../entities/Scene";
-import { COMP_ID } from "../lib/consts";
 import engine from "../lib/engine";
 import HierachyElement from "../ui/hierachy_element";
 import { useNavigate } from "react-router-dom";
+import PONG_SRC from "../games/pong.js";
+import { useSnapshot } from "valtio";
+
+
 export default function SelectionList() {
 
   const navigate = useNavigate();
+  useSnapshot(engine.active_scene);
 
     const options = [
       {
@@ -40,9 +43,16 @@ export default function SelectionList() {
       {
         title: "Reset",
         on_click : (e) => {
-          engine.reset_local_storage();
+          engine.reset();
         } 
       },   
+      {
+        title: "Load Pong",
+        on_click : (e) => {
+          localStorage.setItem("saved-scene",PONG_SRC);
+          engine.load_from_local_storage();
+        } 
+      },        
     ];
 
 

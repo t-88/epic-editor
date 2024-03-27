@@ -227,6 +227,7 @@ html ,body {
   gap: 10px;
   font-weight: bold;
   margin: 5px;
+  flex-wrap: wrap;
 }
 .menu-button { 
   margin: 0;

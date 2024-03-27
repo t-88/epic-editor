@@ -9,7 +9,7 @@ import { COMP_SCRIPT } from './consts';
 
 class Engine {
     constructor() {
-        this.active_scene = undefined;
+        this.active_scene = proxy({val: undefined});
         this.load_from_local_storage();
 
         this.selected_entity = proxy({val : this.active_scene.val});
@@ -62,7 +62,7 @@ class Engine {
         }
     }
     load_from_local_storage() {
-        this.active_scene = proxy({val: new SceneEntity()});
+        this.active_scene.val = new SceneEntity();
         if(!localStorage.getItem("saved-scene")) { return; }
 
         this.active_scene.val.load(JSON.parse(localStorage.getItem("saved-scene")));
@@ -161,6 +161,11 @@ class Engine {
         if(this.code_editor.dragged) return;
         this.code_editor.offset = e.clientY;
         this.code_editor.dragged = true;
+    }
+
+
+    reset() {
+        engine.reset_local_storage();
     }
 }
 

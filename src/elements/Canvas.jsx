@@ -7,6 +7,7 @@ import CodeEditor from './CodeEditor';
 export default function Canvas() {
   const active_scene = useSnapshot(engine.active_scene);
   const code_editor_prox = useSnapshot(engine.code_editor);
+  const script_prox = useSnapshot(engine.cur_script_prox);
   const ref = useRef();
 
 
@@ -21,14 +22,15 @@ export default function Canvas() {
       </div>
 
 
+      {!script_prox.val ? <></> :
+        <div id="code-editor-area"
+          style={{ height: `${code_editor_prox.height}px` }}>
 
-      <div id="code-editor-area" 
-           style={{ height: `${code_editor_prox.height}px` }}>
-        
-        <section className="top-bar" onMouseDown={(e) => engine.code_editor_resize_grap(e)}></section>
-        <CodeEditor />
-      
-      </div>
+          <section className="top-bar" onMouseDown={(e) => engine.code_editor_resize_grap(e)}></section>
+          <CodeEditor />
+
+        </div>
+      }
     </div>
   );
 }

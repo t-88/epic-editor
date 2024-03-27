@@ -5,6 +5,9 @@ import Script from "../components/Script";
 import runner from "../runner";
 import Id from "../../../comps/Id";
 import Stroage from "../components/Storage";
+import OPParser from "../../op_lang/parser";
+import OPTraspiler from "../../op_lang/transpiler";
+import Functions from "../utils/functions";
 
 
 const COMP_MAP = {
@@ -16,66 +19,7 @@ const COMP_MAP = {
     "storage": Stroage,
 };
 
-const shared_globals =  `
-const Components = {
-    "Position" : "pos" ,
-    "Size" : "size",
-    "Color" : "color",
-    "Script" : "script",
-    "Storage" : "storage",
-};
 
-const Keys = {
-    "Left": "ArrowLeft",
-    "Right": "ArrowRight",
-    "Up": "ArrowUp",
-    "Down": "ArrowDown",
-};
-`;
-
-
-
-class Functions {
-    constructor() {}
-
-    is_pressed(key) {
-        return runner.pressed_keys.includes(key);
-    }
-    get_entity_by_id(id) {
-        for(let key in runner.entities) {
-            if(id == runner.entities[key].comps.id.id.val.id) {
-                return runner.entities[key].id
-            }
-        }
-    }    
-    get_component(id,type) {
-        if(type == "storage") {
-            return runner.entities[id].comps[type].map;
-        }
-        return runner.entities[id].comps[type];
-    }  
-    log(data) {
-        console.log(data);
-    }  
-   
-    AABB(x1,y1,w1,h1,x2,y2,w2,h2){
-        return x1 + w1 > x2 && y1 + h1 > y2 && x2 + w2 > x1 && y2 + h2 > y1
-    }
-    sqrt(num) {
-        return Math.sqrt(num)
-    }
-
-    randint(num) {
-        return (Math.random() * 1000) % num
-    } 
-
-    init() {
-        this.log("done")
-    }
-    clear_entities() {
-        this.log("done")
-    }
-}
 
 
 export default class Entity extends Functions {
@@ -84,6 +28,8 @@ export default class Entity extends Functions {
         this.id = crypto.randomUUID();
         this.comps = {};
         runner.entities[this.id] = this;
+        this.on_update = (ID) => { };
+        this.functions = {};
     }
 
 
@@ -92,11 +38,22 @@ export default class Entity extends Functions {
         for(let key in data.comps) {
             this.comps[key] = new COMP_MAP[key](data.comps[key]);
         }
+
+        if (this.comps.script) {
+            let parser = new OPParser();
+            parser.parse(this.comps.script.script)
+            let transpiler = new OPTraspiler();
+
+            transpiler.transpile(parser.program);
+            this.functions = transpiler.functions;
+
+            if (this.functions["on_update"]) {
+                this.on_update = eval("(" + this.functions["on_update"] + ")");
+            }
+        }        
     }
     update() {}
     render(ctx) {}    
 }
-
-export {shared_globals}
 
 
