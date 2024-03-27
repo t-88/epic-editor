@@ -10,6 +10,7 @@ export default class OPTraspiler {
     }
     transpile(node,vars = []) {
         let src = ""
+
         if (node.type == StatementType.Program) {
             for (let i = 0; i < node.statements.length; i++) {
                 src += this.transpile(node.statements[i])
@@ -75,7 +76,7 @@ export default class OPTraspiler {
             src += ")"
         }
         else if (node.type == StatementType.ForIteration) {
-            let variable = this.transpile(node.var);
+            let variable = this.transpile(node.variable);
             src = `for(let ${variable} = ${this.transpile(node.start)}; ${variable} < ${this.transpile(node.end)}; ${variable}++)\n`
             src += this.transpile(node.block)
         }

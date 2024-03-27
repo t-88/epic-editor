@@ -2,9 +2,9 @@ import Position from "../components/Position";
 import Size from "../components/Size";
 import Color from "../components/Color";
 import Script from "../components/Script";
+import Stroage from "../components/Storage";
 import runner from "../runner";
 import Id from "../../../comps/Id";
-import Stroage from "../components/Storage";
 import OPParser from "../../op_lang/parser";
 import OPTraspiler from "../../op_lang/transpiler";
 import Functions from "../utils/functions";
@@ -27,9 +27,10 @@ export default class Entity extends Functions {
         super();
         this.id = crypto.randomUUID();
         this.comps = {};
+        this.functions = {};
         runner.entities[this.id] = this;
         this.on_update = (ID) => { };
-        this.functions = {};
+        this.on_init = (ID) => { };
     }
 
 
@@ -47,10 +48,11 @@ export default class Entity extends Functions {
             transpiler.transpile(parser.program);
             this.functions = transpiler.functions;
 
-            if (this.functions["on_update"]) {
-                this.on_update = eval("(" + this.functions["on_update"] + ")");
-            }
-        }        
+            this.on_update = this.functions["on_update"] ? eval("(" + this.functions["on_update"] + ")") : this.on_update;
+            this.on_init = this.functions["on_init"] ? eval("(" + this.functions["on_init"] + ")") : this.on_init;
+        }
+        
+        this.on_init();
     }
     update() {}
     render(ctx) {}    

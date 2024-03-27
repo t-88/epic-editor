@@ -147,6 +147,11 @@ class Engine {
     add_component(type) {
         this.hide_popup_menu();
         this.selected_entity.val.add_component(type);
+
+        if(type == COMP_SCRIPT) {
+            this.cur_script_prox.val = this.selected_entity.val.comps[COMP_SCRIPT];
+        }
+
     }
 
 
@@ -166,6 +171,8 @@ class Engine {
 
     reset() {
         engine.reset_local_storage();
+        this.cur_script_prox.val = undefined;
+
     }
 }
 

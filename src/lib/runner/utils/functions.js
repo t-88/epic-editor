@@ -9,6 +9,7 @@ export default class Functions {
     }
     get_entity_by_id(id) {
         for(let key in runner.entities) {
+            if(!runner.entities[key].comps.id) continue;
             if(id == runner.entities[key].comps.id.id.val.id) {
                 return runner.entities[key].id
             }
@@ -40,5 +41,16 @@ export default class Functions {
     }
     clear_entities() {
         this.log("done")
+    }
+
+    create_entity(x,y,w,h,r,g,b,on_update_callback) {
+        runner.create_rect();
+        runner.scene.entities[runner.scene.entities.length - 1].load({
+            comps : {
+                size : {w : w, h: h},
+                pos : {x : x, y: y},
+                color : {r : r, g: g,b  : b},
+            }
+        });
     }
 }

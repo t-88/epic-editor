@@ -1,3 +1,5 @@
+import Entity from "./entities/Entity";
+import Rect from "./entities/RectEntity";
 import SceneEntity from "./entities/SceneEntity";
 
 class Runner {
@@ -62,6 +64,11 @@ class Runner {
     stop() {
         this.is_running = false;   
         this.scene = undefined;
+    }
+
+    //NOTE: stupid solution plz change its 00:34:25 i am not in the mood to give a shit
+    create_rect() {
+        this.scene.entities.push(new Rect());
     }
 }
 

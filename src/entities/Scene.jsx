@@ -58,6 +58,7 @@ export default class SceneEntity extends Entity {
                 alert("[LOAD FROM LOCAL STORAGE] unkown type :(");
             }
         }
+
         this.update_renderer();
     }
 

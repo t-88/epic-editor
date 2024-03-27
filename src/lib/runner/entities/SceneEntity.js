@@ -10,6 +10,8 @@ export default class SceneEntity extends Entity {
 
     load(canvas,data) {
         super.load(data);
+
+
         canvas.width = `${data.comps.size.w}`; 
         canvas.height = `${data.comps.size.h}`;
         canvas.style.background = `rgb(${data.comps.color.r},${data.comps.color.g},${data.comps.color.b})`;

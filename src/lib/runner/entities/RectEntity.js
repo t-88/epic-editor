@@ -1,6 +1,4 @@
-import OPParser from "../../op_lang/parser";
-import OPTraspiler from "../../op_lang/transpiler";
-import Entity, { shared_globals } from "./Entity";
+import Entity from "./Entity";
 
 
 
@@ -12,7 +10,6 @@ export default class Rect extends Entity {
 
     load(data) {
         super.load(data);
-        
     }
 
 
