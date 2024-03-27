@@ -6,95 +6,41 @@ import ScriptData from "../models/ScriptData";
 
 
 
-function ScriptElement({refr,idx}) {
-    function generate_menu_options(idx) {
-        return [
-            {title : "Delete", callback: () => {
-                refr.scripts.splice(idx,1);
-                engine.hide_popup_menu();
-            }},
-            {title : "Edit", callback: () => {
-                engine.show_code_editor(refr.scripts[idx]);
-                engine.hide_popup_menu();
-            }},
-        ];
-    }
-
-
-    return  <div  className="script-view"
-    onClick={() => {
-        engine.show_code_editor(refr.scripts[idx]);
-    }}>
-       <p>{refr.scripts[idx].title}</p>
-        <div className="more-icon"
-             onClick={(e) => engine.pop_menu(
-                e,
-                {
-                x: e.target.getBoundingClientRect().x,
-                y: e.target.getBoundingClientRect().y,
-            },generate_menu_options(idx))
-            }
-        >
-            <img  src={more_icon} width={20} height={20} alt="more-icon"/>
-        </div>
-    </div>
-
-}
-
 function ScriptComponent(ref) {
-    const scripts_prox = useSnapshot(ref.scripts);
+    const script_prox = useSnapshot(ref.script);
 
     // when change store
     engine.update_store();
 
 
-    return  <div className="component">  
-        <section className="title-icon">
-            <p>Script</p>
-            <img onClick={() => {
-                ref.scripts.push(new ScriptData());
-                engine.show_code_editor(ref.scripts[ref.scripts.length - 1]);
-            }} src={add_icon} width={25} height={25} 
-            />
+    return <div className="component">
+        <p className="title">Script</p>
+        <section className="script">
+            <div className="script-view">
+                <p>script</p>
+            </div>
         </section>
-        <section className="scripts">
-             {
-                scripts_prox.map((script_data,idx) => {
-                    return   <ScriptElement refr={ref}  
-                                            key={idx} 
-                                            idx={idx}
-                            />
-                })
-            }        
-
-        </section> 
     </div>
 }
 export default class Script {
-    constructor(scripts = []) {
+    constructor(script = "") {
         this.type = "script";
-        this.scripts = proxy([])
+        this.script = proxy({ val: script,  });
         this.renderer = () => ScriptComponent(this);
     }
 
     proxy_list() {
-        return [this.scripts];
+        return [this.script];
     }
-
-    
     get_style_props() {
         return {};
     }
     load(data) {
-        this.scripts.length = 0;
-        for (let i = 0; i < data.scripts.length; i++) {
-            this.scripts.push(data.scripts[i]);
-        }
-
+        this.script.val = data.script;
     }
 
     code() {
-        return {type : this.type, scripts: this.scripts};
+        return { type: this.type, script: this.script.val };
     }
 
 }

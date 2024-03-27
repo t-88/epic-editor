@@ -2,6 +2,7 @@ import { proxy } from 'valtio'
 import RectEntity from '../entities/Rect';
 import SceneEntity from '../entities/Scene';
 import PopupMenu from "../elements/PopupMenu";
+import { COMP_SCRIPT } from './consts';
 
 
 
@@ -76,8 +77,6 @@ class Engine {
     }
     on_canvas_click(mouse_event) {
         if(this.selected_element ==  "") return
-        let x = mouse_event.nativeEvent.offsetX;
-        let y = mouse_event.nativeEvent.offsetY;
         this.selected_element =  "";
 
     } 
@@ -86,17 +85,17 @@ class Engine {
         this.selected_entity.val = ref;
         
         
+        if(this.selected_entity.val.comps[COMP_SCRIPT]) {
+            this.cur_script_prox.val = this.selected_entity.val.comps[COMP_SCRIPT];
+        } else {
+            this.cur_script_prox.val = undefined; 
+        }
+        
+        
         this.mouse_down = true;
         mouse_event.stopPropagation();
     }
 
-    hide_code_editor() {
-        this.is_code_editor_visible.val = false;
-    }
-    show_code_editor(script_prox) {
-        this.is_code_editor_visible.val = true;
-        this.cur_script_prox.val = script_prox;
-    }
     window_clicked() {
         this.popup_menu.visible.val = false;
     }

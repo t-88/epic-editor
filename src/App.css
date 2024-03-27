@@ -127,7 +127,7 @@ html ,body {
 }
 
 
-.component .scripts {
+.component .script {
   padding: 5px 20px 5px 20px;
 }
 
@@ -135,7 +135,8 @@ html ,body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 0 0 15px 0 ;
+  margin: 0 0 0 0 ;
+  padding: 0;
 }
 .script-view p {
   cursor: pointer;

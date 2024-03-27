@@ -14,10 +14,9 @@ export default class Rect extends Entity {
 
     load(data) {
         super.load(data);
-        if (this.comps.script && this.comps.script.scripts.length) {
+        if (this.comps.script) {
             let parser = new OPParser();
-            parser.parse(this.comps.script.scripts[0].body)
-            // parser.print_tree();
+            parser.parse(this.comps.script.script)
             let transpiler = new OPTraspiler();
 
             transpiler.transpile(parser.program);

@@ -4,15 +4,16 @@ import CodeMirror from "@uiw/react-codemirror";
 
 
 export default function CodeEditor() {
-    const script = useSnapshot(engine.cur_script_prox);
-
+    const script_prox = useSnapshot(engine.cur_script_prox);
+    
     return <CodeMirror
-        editable={script.val != undefined}
+        editable={script_prox.val != undefined}
         theme={"dark"}
-        value={script.val ? script.val.body : ""}
+        value={script_prox.val == undefined ? "" : script_prox.val.script.val}
         onChange={(code) => {
-            if(!engine.cur_script_prox.val) return;
-            engine.cur_script_prox.val.body = code;
+            if(!script_prox.val) return;
+            engine.cur_script_prox.val.script.val = code;
+            engine.update_store();
         }}
         id="code-container"
     />
