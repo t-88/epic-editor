@@ -76,3 +76,4 @@ export default class SceneEntity extends Entity {
         };
     }
 }
+

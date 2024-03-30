@@ -2,7 +2,7 @@ import Position from "../components/Position";
 import Size from "../components/Size";
 import Color from "../components/Color";
 import Script from "../components/Script";
-import Stroage from "../components/Storage";
+import Storagee from "../components/Storage";
 import runner from "../runner";
 import Id from "../../../comps/Id";
 import OPParser from "../../op_lang/parser";
@@ -16,7 +16,7 @@ const COMP_MAP = {
     "color": Color,
     "script": Script,
     "id": Id,
-    "storage": Stroage,
+    "storage": Storagee,
 };
 
 
@@ -28,7 +28,6 @@ export default class Entity extends Functions {
         this.id = crypto.randomUUID();
         this.comps = {};
         this.functions = {};
-        runner.entities[this.id] = this;
         this.on_update = (ID) => { };
         this.on_init = (ID) => { };
     }

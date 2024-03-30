@@ -1,13 +1,27 @@
-import Entity from "./entities/Entity";
+import Id from "../../comps/Id";
+import OPParser from "../op_lang/parser";
+import OPTraspiler from "../op_lang/transpiler";
+import Color from "./components/Color";
+import Position from "./components/Position";
+import Size from "./components/Size";
+import Storagee from "./components/Storage";
 import Rect from "./entities/RectEntity";
 import SceneEntity from "./entities/SceneEntity";
+import Functions from "./utils/functions";
+import shared_globals from "./utils/globals";
 
-class Runner {
+class Runner extends Functions {
     constructor() {
+        super();
+
         this.canvas_ref = undefined;
         this.ctx = undefined;
         this.scene = undefined;
 
+
+
+        this.init_callback = () => { };
+        this.update_callback = () => { };
         this.entities = {};
         this.pressed_keys = [];
         this.is_running = false;
@@ -16,60 +30,205 @@ class Runner {
 
     }
 
+
+
     init_events() {
-        document.addEventListener("keydown",(e) => {
-            if(this.pressed_keys.includes(e.code)) return;
+        document.addEventListener("keydown", (e) => {
+            if (this.pressed_keys.includes(e.code)) return;
             this.pressed_keys.push(e.code);
-        },false);
-        document.addEventListener("keyup",(e) => {
-            if(!this.pressed_keys.includes(e.code)) return;
-            this.pressed_keys.splice(this.pressed_keys.indexOf(e.code),1);
-        },false);
+        }, false);
+        document.addEventListener("keyup", (e) => {
+            if (!this.pressed_keys.includes(e.code)) return;
+            this.pressed_keys.splice(this.pressed_keys.indexOf(e.code), 1);
+        }, false);
     }
+
+
+    new_rect({ x, y, w, h, r, g, b, id , storage = [], on_init, on_update }) {
+        let rect = new Rect();
+        rect.comps["pos"] = new Position({x, y});
+        rect.comps["size"] = new Size({w, h});
+        rect.comps["color"] = new Color({r, g, b});
+        rect.comps["storage"] = new Storagee({map : storage});
+        
+        if (id) { rect.comps["id"] = new Id({id}); }
+        rect.update = on_update;
+        rect.init = on_init;
+        this.entities[rect.id] = rect;
+    }
+    new_scene({ w, h, r, g, b,id = "", storage = [], on_init, on_update }) {
+        this.canvas_ref.width = w;
+        this.canvas_ref.height = h;
+        this.canvas_ref.style.background = `rgb(${r},${g},${b})`;
+
+        let scene = new SceneEntity();
+        scene.comps["size"] = new Size({w, h});
+        scene.comps["color"] = new Color({r, g, b});
+        scene.comps["storage"] = new Storagee({map : storage});
+        if (id) { scene.comps["id"] = new Id({id}); }
+
+        this.init_callback = on_init;
+        this.update_callback = on_update;
+        this.entities[scene.id] = scene;
+    }
+
+    is_pressed(key) {
+        return this.pressed_keys.includes(key);
+    }
+    get_entity_by_id(id) {
+        for (let key in this.entities) {
+            if (!this.entities[key].comps.id) continue;
+
+            if (id == this.entities[key].comps.id.id.val.id) {
+                return this.entities[key].id
+            }
+        }
+
+        alert("entity not found");
+    }
+    get_component(id, type) {
+        if (type == "storage") {
+            return this.entities[id].comps[type].map;
+        }
+      
+        return this.entities[id].comps[type];
+    }
+    create_entity(x, y, w, h, r, g, b, on_update_callback) {
+        this.new_rect({ x, y, w, h, r, g, b, on_init: () => { }, on_update: () => { } });
+    }
+    init() {
+        this.log("done")
+    }
+    clear_entities() {
+        this.log("done")
+    }
+
+
 
     load_app() {
-        this.scene = new SceneEntity();
         this.ctx = this.canvas_ref.getContext("2d");
-        if(!localStorage.getItem("saved-scene")) {
-            return;
+
+        let init_src = "";
+        let functions = "";
+        let parser = new OPParser();
+        let transpiler = new OPTraspiler();
+
+
+
+
+        let scene = JSON.parse(localStorage.getItem("saved-scene"));
+        // console.log(scene);
+        this.new_scene({ 
+            w : scene.comps.size.w,
+            h : scene.comps.size.h,
+            r : scene.comps.color.r,
+            g : scene.comps.color.g,
+            b : scene.comps.color.b,
+            id: scene.comps.id.id,
+
+        });
+
+        if (scene.comps.script) {
+            parser.parse(scene.comps.script.script);
+            transpiler.transpile(parser.program, 0, [], `_app_`);
+            for (let key in transpiler.functions) {
+                functions += transpiler.functions[key];
+            }
+
+            // console.log(transpiler.functions)
+            this.update_callback = transpiler.functions[`_app_on_update`] ? `_app_on_update();` : "() => {}";
+            this.init_callback = transpiler.functions[`_app_on_init`] ? `_app_on_init();` : "() => {}";
         }
-        this.scene.load(this.canvas_ref,JSON.parse(localStorage.getItem("saved-scene")))
-        this.animate();
+
+
+
+        // load all entities
+        for (let i = 0; i < scene.children.length; i++) {
+            let entity = scene.children[i];
+            let update_callback;
+            let init_callback;
+
+            if (entity.comps.script) {
+                parser.parse(entity.comps.script.script);
+                transpiler.transpile(parser.program, 0, [], `_${i}_`);
+                for (let key in transpiler.functions) {
+                    functions += transpiler.functions[key];
+                }
+                // console.log(transpiler.functions)
+                update_callback = transpiler.functions[`_${i}_on_update`] ? `_${i}_on_update` : "() => {}";
+                init_callback = transpiler.functions[`_${i}_on_init`] ? `_${i}_on_init` : "() => {}";
+            }
+            init_src += `
+                rect = self.new_rect({
+                    x : ${entity.comps.pos.x},
+                    y : ${entity.comps.pos.y},
+                    w : ${entity.comps.size.w},
+                    h : ${entity.comps.size.h},
+                    r : ${entity.comps.color.r},
+                    g : ${entity.comps.color.g},
+                    b : ${entity.comps.color.b},
+                    id: "${entity.comps.id.id ?? ""}",
+                    storage: ${entity.comps.storage ? JSON.stringify(entity.comps.storage.map.map((val) => val)) : "[]"},
+                    on_update : ${update_callback},
+                    on_init : ${init_callback},
+
+                });
+            `;
+        }
+
+        let src = `
+        (self) => {
+            // consts
+            ${shared_globals}
+
+            // functions 
+            ${functions}
+
+            // init function
+            function init() {
+                ${this.init_callback}
+                let rect;
+                ${init_src}
+            }
+
+            function update() {
+                if(!self.is_running) return;
+
+                ${this.update_callback}
+                for (let entity_id in self.entities) {
+                    self.entities[entity_id].update(entity_id);
+                }
+                self.render();
+
+                requestAnimationFrame(() => update());
+            }
+            init();
+            update();
+        }`;
+
+        eval(src)(this);
+
     }
 
 
-
-    animate() {
-        if(!this.is_running || !this.scene) return;
-        this.update();
-        this.render();
-        requestAnimationFrame(() => this.animate());
-    }
-
-
-    update() {
-        this.scene.update();
-    }
     render() {
         this.ctx.clearRect(0, 0, this.canvas_ref.width, this.canvas_ref.height);
-        this.scene.render(this.ctx);
+        for (let entity_id in this.entities) {
+            this.entities[entity_id].render(this.ctx);
+        }
     }
 
     start() {
-        this.is_running = true;   
+        this.is_running = true;
         this.scene = undefined;
         this.entities = {};
         this.pressed_keys = [];
     }
     stop() {
-        this.is_running = false;   
+        this.is_running = false;
         this.scene = undefined;
     }
 
-    //NOTE: stupid solution plz change its 00:34:25 i am not in the mood to give a shit
-    create_rect() {
-        this.scene.entities.push(new Rect());
-    }
 }
 
 

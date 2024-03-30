@@ -1,4 +1,4 @@
-export default class Stroage {
+export default class Storagee {
     constructor(data) {
         this.map = {};
         for (let i = 0; i < data.map.length; i++) {
