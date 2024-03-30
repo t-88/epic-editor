@@ -1,4 +1,4 @@
-import Id from "../../comps/Id";
+import Id from "./components/Id";
 import OPParser from "../op_lang/parser";
 import OPTraspiler from "../op_lang/transpiler";
 import Color from "./components/Color";
@@ -9,6 +9,7 @@ import Rect from "./entities/RectEntity";
 import SceneEntity from "./entities/SceneEntity";
 import Functions from "./utils/functions";
 import shared_globals from "./utils/globals";
+
 
 class Runner extends Functions {
     constructor() {
@@ -28,6 +29,9 @@ class Runner extends Functions {
 
         this.init_events();
 
+        this.animation_frame_id = undefined;
+
+        this.intial_state = {};
     }
 
 
@@ -79,7 +83,7 @@ class Runner extends Functions {
         for (let key in this.entities) {
             if (!this.entities[key].comps.id) continue;
 
-            if (id == this.entities[key].comps.id.id.val.id) {
+            if (id == this.entities[key].comps.id.id) {
                 return this.entities[key].id
             }
         }
@@ -93,15 +97,19 @@ class Runner extends Functions {
       
         return this.entities[id].comps[type];
     }
-    create_entity(x, y, w, h, r, g, b, on_update_callback) {
-        this.new_rect({ x, y, w, h, r, g, b, on_init: () => { }, on_update: () => { } });
+    create_entity(x, y, w, h, r, g, b,on_init = () => {}, on_update = ()=>{}) {
+        this.new_rect({ x, y, w, h, r, g, b, on_init: on_init, on_update: on_update });
+    }
+    remove_entity(id) {
+        delete this.entities[id];
     }
     init() {
-        this.log("done")
+        location.reload();
     }
     clear_entities() {
-        this.log("done")
+        
     }
+
 
 
 
@@ -109,15 +117,11 @@ class Runner extends Functions {
         this.ctx = this.canvas_ref.getContext("2d");
 
         let init_src = "";
-        let functions = "";
         let parser = new OPParser();
         let transpiler = new OPTraspiler();
 
 
-
-
         let scene = JSON.parse(localStorage.getItem("saved-scene"));
-        // console.log(scene);
         this.new_scene({ 
             w : scene.comps.size.w,
             h : scene.comps.size.h,
@@ -125,22 +129,10 @@ class Runner extends Functions {
             g : scene.comps.color.g,
             b : scene.comps.color.b,
             id: scene.comps.id.id,
-
         });
 
-        if (scene.comps.script) {
-            parser.parse(scene.comps.script.script);
-            transpiler.transpile(parser.program, 0, [], `_app_`);
-            for (let key in transpiler.functions) {
-                functions += transpiler.functions[key];
-            }
 
-            // console.log(transpiler.functions)
-            this.update_callback = transpiler.functions[`_app_on_update`] ? `_app_on_update();` : "() => {}";
-            this.init_callback = transpiler.functions[`_app_on_init`] ? `_app_on_init();` : "() => {}";
-        }
-
-
+            
 
         // load all entities
         for (let i = 0; i < scene.children.length; i++) {
@@ -148,17 +140,20 @@ class Runner extends Functions {
             let update_callback;
             let init_callback;
 
+            let functions = "";
+
             if (entity.comps.script) {
                 parser.parse(entity.comps.script.script);
                 transpiler.transpile(parser.program, 0, [], `_${i}_`);
                 for (let key in transpiler.functions) {
                     functions += transpiler.functions[key];
                 }
-                // console.log(transpiler.functions)
                 update_callback = transpiler.functions[`_${i}_on_update`] ? `_${i}_on_update` : "() => {}";
                 init_callback = transpiler.functions[`_${i}_on_init`] ? `_${i}_on_init` : "() => {}";
             }
             init_src += `
+            {
+                ${functions}
                 rect = self.new_rect({
                     x : ${entity.comps.pos.x},
                     y : ${entity.comps.pos.y},
@@ -173,8 +168,23 @@ class Runner extends Functions {
                     on_init : ${init_callback},
 
                 });
+            }
             `;
         }
+
+
+        let functions = "";
+        if (scene.comps.script) {
+            parser.parse(scene.comps.script.script);
+            transpiler.transpile(parser.program, 0, []);
+            for (let key in transpiler.functions) {
+                functions += transpiler.functions[key];
+            }
+            this.update_callback = transpiler.functions[`on_update`] ? `on_update();` : "() => {}";
+            this.init_callback = transpiler.functions[`on_init`] ? `on_init();` : "() => {}";
+        }   
+
+
 
         let src = `
         (self) => {
@@ -182,25 +192,34 @@ class Runner extends Functions {
             ${shared_globals}
 
             // functions 
-            ${functions}
 
             // init function
             function init() {
-                ${this.init_callback}
+                {
+                    ${functions}
+                    ${this.init_callback}
+                }
                 let rect;
                 ${init_src}
+
+                for (let entity_id in self.entities) {
+                    self.entities[entity_id].init(entity_id);
+                }
+                console.log(self.entities);
             }
 
             function update() {
                 if(!self.is_running) return;
 
                 ${this.update_callback}
+                let i = 0;
                 for (let entity_id in self.entities) {
                     self.entities[entity_id].update(entity_id);
+                    i += 1;
                 }
                 self.render();
 
-                requestAnimationFrame(() => update());
+                self.animation_frame_id = requestAnimationFrame(() => update());
             }
             init();
             update();
@@ -218,11 +237,12 @@ class Runner extends Functions {
         }
     }
 
-    start() {
+    start() {       
         this.is_running = true;
         this.scene = undefined;
-        this.entities = {};
+        this.entities = structuredClone(this.intial_state);
         this.pressed_keys = [];
+
     }
     stop() {
         this.is_running = false;

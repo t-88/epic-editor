@@ -53,6 +53,7 @@ export default class Entity extends Functions {
         
         this.on_init();
     }
+    init() {}
     update() {}
     render(ctx) {}    
 }

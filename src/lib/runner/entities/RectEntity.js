@@ -12,9 +12,9 @@ export default class Rect extends Entity {
         super.load(data);
     }
 
-
+    init() {
+    }
     update() {
-        this.on_update(this.id)
     }
 
 

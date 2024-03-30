@@ -11,12 +11,14 @@ export default class OPTraspiler {
 
     }
     transpile(node,depth=0,vars = [],function_prefix = "") {
-        this.function_prefix = function_prefix ? function_prefix : this.function_prefix;
         
         let ident = "\t".replace(depth);
         let src =  ""
 
         if (node.type == StatementType.Program) {
+            this.function_prefix =  function_prefix;
+            this.functions = {};
+            
             for (let i = 0; i < node.statements.length; i++) {
                 src += this.transpile(node.statements[i])
                 src += "\n"
