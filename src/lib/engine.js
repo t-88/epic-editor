@@ -6,6 +6,17 @@ import { COMP_SCRIPT } from './consts';
 
 
 
+function download_text_file(filename,text) {
+    console.log(text);
+    var elem = document.createElement("a");
+    elem.setAttribute("href","data:text/plain;charset=utf8," + encodeURIComponent(text));
+    elem.setAttribute("download",filename);
+    elem.style.display = "none";
+    document.body.appendChild(elem);
+    elem.click()
+    document.body.removeChild(elem);
+}
+
 
 class Engine {
     constructor() {
@@ -173,6 +184,10 @@ class Engine {
         engine.reset_local_storage();
         this.cur_script_prox.val = undefined;
 
+    }
+
+    generate_src() {
+        download_text_file("src.json",localStorage.getItem("saved-scene"));
     }
 }
 

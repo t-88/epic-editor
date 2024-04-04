@@ -1,0 +1,3 @@
+[submodule "epic.py"]
+	path = epic.py
+	url = git@github.com:t-88/epic.py.git

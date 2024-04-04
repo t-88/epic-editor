@@ -47,12 +47,18 @@ export default function SelectionList() {
         } 
       },   
       {
-        title: "Load Pong",
+        title: "RunPong",
         on_click : (e) => {
           localStorage.setItem("saved-scene",PONG_SRC);
           engine.load_from_local_storage();
         } 
-      },        
+      },   
+      {
+        title: "Generate",
+        on_click : (e) => {
+          engine.generate_src();
+        } 
+      },              
     ];
 
 
