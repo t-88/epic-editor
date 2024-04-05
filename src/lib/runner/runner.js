@@ -6,7 +6,6 @@ import Position from "./components/Position";
 import Size from "./components/Size";
 import Storage from "./components/Storage";
 import Rect from "./entities/RectEntity";
-import SceneEntity from "./entities/SceneEntity";
 import Functions from "./utils/functions";
 import shared_globals from "./utils/globals";
 
@@ -19,12 +18,14 @@ class Runner extends Functions {
         this.ctx = undefined;
         this.scene = undefined;
 
-
-        this.init_callback = () => { };
-        this.update_callback = () => { };
         this.entities = {};
         this.pressed_keys = [];
         this.is_running = false;
+
+        this.parser = new OPParser();
+        this.transpiler = new OPTraspiler();
+        this.init_src = "";
+
 
         document.addEventListener("keydown", (e) => {
             if (this.pressed_keys.includes(e.code)) return;
@@ -37,6 +38,9 @@ class Runner extends Functions {
     }
 
 
+    is_pressed(key) {
+        return this.pressed_keys.includes(key);
+    }
     create_react({ pos, size, color, id, storage, functions }) {
         let rect = new Rect();
         this.entities[rect.uuid] = rect;
@@ -50,10 +54,7 @@ class Runner extends Functions {
             if (functions.on_update) rect.on_update = functions.on_update;
             if (functions.on_init) rect.on_init = functions.on_init;
         }
-    }
-    is_pressed(key) {
-        return this.pressed_keys.includes(key);
-    }
+    }    
     get_entity_by_id(id) {
         for (let key in this.entities) {
             if (!this.entities[key].comps.id) continue;
@@ -78,45 +79,29 @@ class Runner extends Functions {
     init() {
         location.reload();
     }
-    clear_entities() {}
+    clear_entities() { }
+    load_functions(script, func_prefix = "") {
+        let function_declarations = "";
+        let function_names = {};
 
-    
-    load_app() {
-        this.ctx = this.canvas_ref.getContext("2d");
-
-        let init_src = "";
-        let parser = new OPParser();
-        let transpiler = new OPTraspiler();
-
-        let scene = JSON.parse(localStorage.getItem("saved-scene"));
-        this.create_react({
-            pos: { x: 0, y: 0, },
-            size: scene.comps.size,
-            color: scene.comps.color,
-            id: scene.comps.id,
-        });
-        this.canvas_ref.width = scene.comps.size.w;
-        this.canvas_ref.height = scene.comps.size.h;
-        this.canvas_ref.style.background = `rgb(${scene.comps.color.r},${scene.comps.color.g},${scene.comps.color.b})`;
-
-        // load all entities
+        if (script) {
+            this.parser.parse(script.script);
+            this.transpiler.transpile(this.parser.program, 0, [], func_prefix);
+            for (let key in this.transpiler.functions) {
+                function_declarations += this.transpiler.functions[key];
+            }
+            function_names.on_update = this.transpiler.functions[func_prefix + `on_update`] ? func_prefix + `on_update` : undefined
+            function_names.on_init = this.transpiler.functions[func_prefix + `on_init`] ? func_prefix + `on_init` : undefined
+        }
+        return [function_declarations, function_names]
+    }
+    load_entities(scene) {
         for (let i = 0; i < scene.children.length; i++) {
             let entity = scene.children[i];
-            let entity_functions = {};
-            let functions = "";
-
-            if (entity.comps.script) {
-                parser.parse(entity.comps.script.script);
-                transpiler.transpile(parser.program, 0, [], `_${i}_`);
-                for (let key in transpiler.functions) {
-                    functions += transpiler.functions[key];
-                }
-                entity_functions.on_update = transpiler.functions[`_${i}_on_update`] ? `_${i}_on_update` : undefined
-                entity_functions.on_init = transpiler.functions[`_${i}_on_init`] ? `_${i}_on_init` : undefined
-            }
-            init_src += `
+            const [function_declarations, function_names] = this.load_functions(entity.comps.script, `_${i}_`);
+            this.init_src += `
             {
-                ${functions}
+                ${function_declarations}
                 self.create_react({
                     pos :       ${JSON.stringify(entity.comps.pos)},
                     size :      ${JSON.stringify(entity.comps.size)},
@@ -124,65 +109,72 @@ class Runner extends Functions {
                     storage :   ${JSON.stringify(entity.comps.storage)},
                     id:         ${JSON.stringify(entity.comps.id)},
                     functions : {
-                        on_update : ${entity_functions.on_update},
-                        on_init : ${entity_functions.on_init},
+                        on_update : ${function_names.on_update},
+                        on_init : ${function_names.on_init},
                     },
                 });                
             }
             `;
         }
-
-
-        let functions = "";
-        if (scene.comps.script) {
-            parser.parse(scene.comps.script.script);
-            transpiler.transpile(parser.program, 0, []);
-            for (let key in transpiler.functions) {
-                functions += transpiler.functions[key];
-            }
-            this.update_callback = transpiler.functions[`on_update`] ? `on_update();` : "() => {}";
-            this.init_callback = transpiler.functions[`on_init`] ? `on_init();` : "() => {}";
+    }
+    load_scene(scene) {
+        const [function_declarations, function_names] = this.load_functions(scene.comps.script);
+        this.canvas_ref.width = scene.comps.size.w;
+        this.canvas_ref.height = scene.comps.size.h;
+        this.canvas_ref.style.background = `rgb(${scene.comps.color.r},${scene.comps.color.g},${scene.comps.color.b})`;
+        this.init_src += `
+        {
+            ${function_declarations}
+            self.create_react({
+                pos :       ${JSON.stringify({ x: 0, y: 0, })},
+                size :      ${JSON.stringify(scene.comps.size)},
+                color :     ${JSON.stringify(scene.comps.color)},
+                storage :   ${JSON.stringify(scene.comps.storage)},
+                id:         ${JSON.stringify(scene.comps.id)},
+                functions : {
+                    on_update : ${function_names.on_update},
+                    on_init : ${function_names.on_init},
+                },
+            });                
         }
-
-
-
-        let src = `
+        `;
+    }
+    create_js_src(init) {
+        return `
         (self) => {
             // consts
             ${shared_globals}
 
             function init() {
-                {
-                    ${functions}
-                    ${this.init_callback}
-                }
-                let rect;
-                ${init_src}
-
+                ${init}
                 for (let uuid in self.entities) {
                     self.entities[uuid].on_init(uuid);
                 }
             }
-
             function update() {
                 if(!self.is_running) return;
-
-                ${this.update_callback}
                 let i = 0;
                 for (let uuid in self.entities) {
                     self.entities[uuid].on_update(uuid);
                     i += 1;
                 }
                 self.render();
-
                 requestAnimationFrame(() => update());
             }
             init();
             update();
         }`;
+    }
+    load_app() {
+        this.ctx = this.canvas_ref.getContext("2d");
+        this.init_src = "";
 
+        let scene = JSON.parse(localStorage.getItem("saved-scene"));
+        this.load_scene(scene);
+        this.load_entities(scene);
+
+        let src = this.create_js_src(this.init_src);
         eval(src)(this);
-
     }
 
 
@@ -203,7 +195,6 @@ class Runner extends Functions {
         this.is_running = false;
         this.scene = undefined;
     }
-
 }
 
 
