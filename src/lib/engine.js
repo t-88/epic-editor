@@ -187,7 +187,7 @@ class Engine {
     }
 
     generate_src() {
-        download_text_file("src.json",localStorage.getItem("saved-scene"));
+    download_text_file("src.json",localStorage.getItem("saved-scene"));
     }
 }
 

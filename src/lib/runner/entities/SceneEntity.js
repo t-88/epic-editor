@@ -1,9 +1,7 @@
 import Entity from "./Entity";
-import Rect from "./RectEntity";
-
 
 export default class SceneEntity extends Entity {
-    constructor() {
+    constructor(canvas_ref) {
         super();
     }
 }

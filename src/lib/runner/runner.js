@@ -4,14 +4,11 @@ import OPTraspiler from "../op_lang/transpiler";
 import Color from "./components/Color";
 import Position from "./components/Position";
 import Size from "./components/Size";
-import Storagee from "./components/Storage";
+import Storage from "./components/Storage";
 import Rect from "./entities/RectEntity";
 import SceneEntity from "./entities/SceneEntity";
 import Functions from "./utils/functions";
 import shared_globals from "./utils/globals";
-
-
-
 
 
 class Runner extends Functions {
@@ -23,23 +20,12 @@ class Runner extends Functions {
         this.scene = undefined;
 
 
-
         this.init_callback = () => { };
         this.update_callback = () => { };
         this.entities = {};
         this.pressed_keys = [];
         this.is_running = false;
 
-        this.init_events();
-
-        this.animation_frame_id = undefined;
-
-        this.intial_state = {};
-    }
-
-
-
-    init_events() {
         document.addEventListener("keydown", (e) => {
             if (this.pressed_keys.includes(e.code)) return;
             this.pressed_keys.push(e.code);
@@ -51,57 +37,40 @@ class Runner extends Functions {
     }
 
 
-    new_rect({ x, y, w, h, r, g, b, id , storage = [], on_init, on_update }) {
+    create_react({ pos, size, color, id, storage, functions }) {
         let rect = new Rect();
-        rect.comps["pos"] = new Position({x, y});
-        rect.comps["size"] = new Size({w, h});
-        rect.comps["color"] = new Color({r, g, b});
-        rect.comps["storage"] = new Storagee({map : storage});
-        
-        if (id) { rect.comps["id"] = new Id({id}); }
-        rect.update = on_update;
-        rect.init = on_init;
-        this.entities[rect.id] = rect;
+        this.entities[rect.uuid] = rect;
+
+        if (pos) rect.comps["pos"] = new Position({ x: pos.x, y: pos.y });
+        if (color) rect.comps["color"] = new Color({ r: color.r, g: color.g, b: color.b });
+        if (size) rect.comps["size"] = rect.comps["size"] = new Size({ w: size.w, h: size.h });
+        if (storage) rect.comps["storage"] = new Storage({ map: storage.map.map((val) => val) });
+        if (id) rect.comps["id"] = new Id({ id: id.id });
+        if (functions) {
+            if (functions.on_update) rect.on_update = functions.on_update;
+            if (functions.on_init) rect.on_init = functions.on_init;
+        }
     }
-    new_scene({ w, h, r, g, b,id = "", storage = [], on_init, on_update }) {
-        this.canvas_ref.width = w;
-        this.canvas_ref.height = h;
-        this.canvas_ref.style.background = `rgb(${r},${g},${b})`;
-
-        let scene = new SceneEntity();
-        scene.comps["size"] = new Size({w, h});
-        scene.comps["color"] = new Color({r, g, b});
-        scene.comps["storage"] = new Storagee({map : storage});
-        if (id) { scene.comps["id"] = new Id({id}); }
-
-        this.init_callback = on_init;
-        this.update_callback = on_update;
-        this.entities[scene.id] = scene;
-    }
-
     is_pressed(key) {
         return this.pressed_keys.includes(key);
     }
     get_entity_by_id(id) {
         for (let key in this.entities) {
             if (!this.entities[key].comps.id) continue;
-
             if (id == this.entities[key].comps.id.id) {
-                return this.entities[key].id
+                return this.entities[key].uuid
             }
         }
-
         alert("entity not found");
     }
     get_component(id, type) {
         if (type == "storage") {
             return this.entities[id].comps[type].map;
         }
-      
         return this.entities[id].comps[type];
     }
-    create_entity(x, y, w, h, r, g, b,on_init = () => {}, on_update = ()=>{}) {
-        this.new_rect({ x, y, w, h, r, g, b, on_init: on_init, on_update: on_update });
+    create_entity(x, y, w, h, r, g, b, on_init = () => { }, on_update = () => { }) {
+        this.create_react({ pos: { x, y }, size: { w, h }, color: { r, g, b }, functions: { on_init: on_init, on_update: on_update } });
     }
     remove_entity(id) {
         delete this.entities[id];
@@ -109,13 +78,9 @@ class Runner extends Functions {
     init() {
         location.reload();
     }
-    clear_entities() {
-        
-    }
+    clear_entities() {}
 
-
-
-
+    
     load_app() {
         this.ctx = this.canvas_ref.getContext("2d");
 
@@ -123,26 +88,21 @@ class Runner extends Functions {
         let parser = new OPParser();
         let transpiler = new OPTraspiler();
 
-
         let scene = JSON.parse(localStorage.getItem("saved-scene"));
-        this.new_scene({ 
-            w : scene.comps.size.w,
-            h : scene.comps.size.h,
-            r : scene.comps.color.r,
-            g : scene.comps.color.g,
-            b : scene.comps.color.b,
-            id: scene.comps.id.id,
+        this.create_react({
+            pos: { x: 0, y: 0, },
+            size: scene.comps.size,
+            color: scene.comps.color,
+            id: scene.comps.id,
         });
-
-
-            
+        this.canvas_ref.width = scene.comps.size.w;
+        this.canvas_ref.height = scene.comps.size.h;
+        this.canvas_ref.style.background = `rgb(${scene.comps.color.r},${scene.comps.color.g},${scene.comps.color.b})`;
 
         // load all entities
         for (let i = 0; i < scene.children.length; i++) {
             let entity = scene.children[i];
-            let update_callback;
-            let init_callback;
-
+            let entity_functions = {};
             let functions = "";
 
             if (entity.comps.script) {
@@ -151,26 +111,23 @@ class Runner extends Functions {
                 for (let key in transpiler.functions) {
                     functions += transpiler.functions[key];
                 }
-                update_callback = transpiler.functions[`_${i}_on_update`] ? `_${i}_on_update` : "() => {}";
-                init_callback = transpiler.functions[`_${i}_on_init`] ? `_${i}_on_init` : "() => {}";
+                entity_functions.on_update = transpiler.functions[`_${i}_on_update`] ? `_${i}_on_update` : undefined
+                entity_functions.on_init = transpiler.functions[`_${i}_on_init`] ? `_${i}_on_init` : undefined
             }
             init_src += `
             {
                 ${functions}
-                rect = self.new_rect({
-                    x : ${entity.comps.pos.x},
-                    y : ${entity.comps.pos.y},
-                    w : ${entity.comps.size.w},
-                    h : ${entity.comps.size.h},
-                    r : ${entity.comps.color.r},
-                    g : ${entity.comps.color.g},
-                    b : ${entity.comps.color.b},
-                    id: "${entity.comps.id.id ?? ""}",
-                    storage: ${entity.comps.storage ? JSON.stringify(entity.comps.storage.map.map((val) => val)) : "[]"},
-                    on_update : ${update_callback},
-                    on_init : ${init_callback},
-
-                });
+                self.create_react({
+                    pos :       ${JSON.stringify(entity.comps.pos)},
+                    size :      ${JSON.stringify(entity.comps.size)},
+                    color :     ${JSON.stringify(entity.comps.color)},
+                    storage :   ${JSON.stringify(entity.comps.storage)},
+                    id:         ${JSON.stringify(entity.comps.id)},
+                    functions : {
+                        on_update : ${entity_functions.on_update},
+                        on_init : ${entity_functions.on_init},
+                    },
+                });                
             }
             `;
         }
@@ -185,7 +142,7 @@ class Runner extends Functions {
             }
             this.update_callback = transpiler.functions[`on_update`] ? `on_update();` : "() => {}";
             this.init_callback = transpiler.functions[`on_init`] ? `on_init();` : "() => {}";
-        }   
+        }
 
 
 
@@ -194,9 +151,6 @@ class Runner extends Functions {
             // consts
             ${shared_globals}
 
-            // functions 
-
-            // init function
             function init() {
                 {
                     ${functions}
@@ -205,10 +159,9 @@ class Runner extends Functions {
                 let rect;
                 ${init_src}
 
-                for (let entity_id in self.entities) {
-                    self.entities[entity_id].init(entity_id);
+                for (let uuid in self.entities) {
+                    self.entities[uuid].on_init(uuid);
                 }
-                console.log(self.entities);
             }
 
             function update() {
@@ -216,13 +169,13 @@ class Runner extends Functions {
 
                 ${this.update_callback}
                 let i = 0;
-                for (let entity_id in self.entities) {
-                    self.entities[entity_id].update(entity_id);
+                for (let uuid in self.entities) {
+                    self.entities[uuid].on_update(uuid);
                     i += 1;
                 }
                 self.render();
 
-                self.animation_frame_id = requestAnimationFrame(() => update());
+                requestAnimationFrame(() => update());
             }
             init();
             update();
@@ -239,11 +192,10 @@ class Runner extends Functions {
             this.entities[entity_id].render(this.ctx);
         }
     }
-
-    start() {       
+    start() {
         this.is_running = true;
         this.scene = undefined;
-        this.entities = structuredClone(this.intial_state);
+        this.entities = {};
         this.pressed_keys = [];
 
     }
@@ -258,3 +210,6 @@ class Runner extends Functions {
 
 const runner = new Runner();
 export default runner;
+
+
+
