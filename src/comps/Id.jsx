@@ -3,16 +3,16 @@ import engine from "../lib/engine";
 
 
 function IdComponent(self) {
-    const id_prox = useSnapshot(self.id);
-
-    // when change store
-    engine.update_store();
-
-    return <div className="component"> 
-    <p className="title">Id</p>
+    function on_change(e) {
+        self.id.val = e.target.value;
+        engine.update_store();
+    }
+    return <div className="component">
+        <p className="title">Id</p>
         <section className="component-props-row">
             <div className="inline-input expanded-input">
-                <p>id </p> <input value={id_prox.val} onChange={(e) =>  self.id.val = e.target.value} />    
+                <p>id </p> 
+                <input  defaultValue={self.id.val} onChange={on_change} />
             </div>
         </section>
     </div>
@@ -20,7 +20,7 @@ function IdComponent(self) {
 export default class Id {
     constructor(id = "") {
         this.type = "id";
-        this.id = proxy({val : id});
+        this.id = proxy({ val: id });
         this.renderer = () => IdComponent(this);
     }
 
@@ -31,15 +31,12 @@ export default class Id {
     get_style_props() {
         return {};
     }
-    load(data) {
-        this.id.val = data.id;
+    load(id) {
+        this.id.val = id;
     }
 
     code() {
-        return {
-            type : this.type,
-            id : this.id.val,
-        }
+        return this.id.val;
     }
 }
 

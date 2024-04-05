@@ -2,21 +2,27 @@ import { proxy, useSnapshot } from "valtio";
 import engine from "../lib/engine";
 
 
-function SizeComponent(ref,w,h) {
-    const w_prox = useSnapshot(w);
-    const h_prox = useSnapshot(h);
+function SizeComponent(self,w,h) {
+    function on_change_w(e) {
+        e.target.value = Math.max(0,parseInt(e.target.value)); 
+        w.val = parseInt(e.target.value);
+        engine.update_store();
+    }
+    function on_change_h(e) {
+        e.target.value = Math.max(0,parseInt(e.target.value)); 
+        h.val = parseInt(e.target.value)
+       engine.update_store();
+    }
 
-    // when change store
-    engine.update_store();
 
     return <div className="component">         
         <p className="title">Size</p>
         <section className="component-props-row">
         <div className="inline-input">
-            <p>w</p> <input value={w_prox.val} onChange={(e) =>  w.val = parseInt(e.target.value)} />    
+            <p>w</p> <input type="number" defaultValue={w.val} onChange={on_change_w} />    
         </div>
         <div className="inline-input">
-            <p>h</p> <input value={h_prox.val} onChange={(e) =>  h.val = parseInt(e.target.value)} />    
+            <p>h</p> <input type="number" defaultValue={h.val} onChange={on_change_h} />    
         </div>        
         </section>
     </div>
@@ -51,7 +57,6 @@ export default  class Size {
 
     code() {
         return {
-            type: this.type,
             w : this.w.val,
             h : this.h.val,
         }

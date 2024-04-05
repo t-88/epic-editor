@@ -1,15 +1,22 @@
 import { proxy, useSnapshot } from "valtio";
 import add_icon from "../assets/plus.png";
-import more_icon from "../assets/more.png";
 import engine from "../lib/engine";
-import ScriptData from "../models/ScriptData";
 
 
 
 function StorageComponent(ref) {
-    const map_prox = useSnapshot(ref.map);
-    // when change store
-    engine.update_store();
+    useSnapshot(ref.map);
+
+
+    function on_change_key(e,idx) {
+        ref.map[idx].key = e.target.value;
+        engine.update_store();
+    }
+    function on_change_value(e,idx) {
+        ref.map[idx].val = e.target.value;
+        engine.update_store();
+    }
+
 
     return <div className="component">
         <section className="title-icon">
@@ -20,7 +27,7 @@ function StorageComponent(ref) {
                     ref.map.push({
                         key: "name",
                         val: "value"
-                    })
+                    });
                 }}/>
         </section>
         <section className="storage">
@@ -28,8 +35,8 @@ function StorageComponent(ref) {
                 ref.map.map((storage_val, idx) => {
                     return <div key={idx}>
                         <div className="inline-input storage-input">
-                            <input value={storage_val.key} onChange={(e) => ref.map[idx].key = e.target.value} />
-                            <input value={storage_val.val} onChange={(e) => ref.map[idx].val = e.target.value} />
+                            <input defaultValue={storage_val.key} onChange={(e) => on_change_key(e,idx)} />
+                            <input defaultValue={storage_val.val} onChange={(e) => on_change_value(e,idx)} />
                         </div>
                     </div>
                 })
@@ -53,15 +60,16 @@ export default class Storage {
     get_style_props() {
         return {};
     }
-    load(data) {
+    load(map) {
         this.map.length = 0;
-        for (let i = 0; i < data.map.length; i++) {
-            this.map.push(data.map[i]);
+        for (let i = 0; i < map.length; i++) {
+
+            this.map.push(map[i]);
         }
     }
 
     code() { 
-        return { type: this.type, map: [...this.map] }; 
+        return  [...this.map]; 
     }
 }
 

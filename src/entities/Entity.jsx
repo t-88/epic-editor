@@ -48,8 +48,9 @@ export default class Enitity {
     }
     load(data) {
         for (let i = 0; i < Object.keys(data.comps).length; i++) {
-            this.comps[data.comps[Object.keys(data.comps)[i]].type] = new COMP_MAP[data.comps[Object.keys(data.comps)[i]].type];
-            this.comps[data.comps[Object.keys(data.comps)[i]].type].load(data.comps[Object.keys(data.comps)[i]]);
+            let type = Object.keys(data.comps)[i]
+            this.comps[type] = new COMP_MAP[type];
+            this.comps[type].load(data.comps[Object.keys(data.comps)[i]]);
         }
         this.renderer = () => this.base_renderer(this,{});
     }

@@ -1,4 +1,5 @@
-- script make sure, on_update and on_init exist
-- better input system
+- [x] cleaner output code, id.id , script.script bs
+- [~] script make sure, on_update and on_init exist 
+- [~] better input system
 - color selector
-- cleaner output code, id.id , script.script bs
+- add delta time to update, use a helper function, it will be fine :)

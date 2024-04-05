@@ -2,24 +2,26 @@ import { proxy, useSnapshot } from "valtio";
 import engine from "../lib/engine";
 
 
-function PositionComponent(ref,x,y) {
-    const x_prox = useSnapshot(x);
-    const y_prox = useSnapshot(y);
-
-    // when change store
-    engine.update_store();
-
+function PositionComponent(self, x, y) {
+    function on_change_x(e) {
+        x.val = parseInt(e.target.value);
+        engine.update_store();
+    }
+    function on_change_y(e) {
+        y.val = parseInt(e.target.value);
+        engine.update_store();
+    }
 
     return <div className="component">
         <p className="title">Position</p>
         <section className="component-props-row">
             <div className="inline-input">
-                <p>x</p> 
-                <input value={x_prox.val} onChange={(e) =>  x.val = parseInt(e.target.value)} />    
+                <p>x</p>
+                <input type="number"  defaultValue={x.val} onChange={on_change_x} />
             </div>
             <div className="inline-input">
-                <p>y</p> <input value={y_prox.val} onChange={(e) =>  y.val = parseInt(e.target.value)} />    
-            </div>        
+                <p>y</p> <input type="number" defaultValue={y.val} onChange={on_change_y} />
+            </div>
         </section>
     </div>
 }
@@ -27,21 +29,21 @@ export default class Position {
     constructor(x = 0, y = 0) {
         this.type = "pos";
 
-        this.x = proxy({val : x});
-        this.y = proxy({val : y});
-        
-        this.renderer = () => PositionComponent(this,this.x,this.y);
+        this.x = proxy({ val: x });
+        this.y = proxy({ val: y });
+
+        this.renderer = () => PositionComponent(this, this.x, this.y);
     }
 
     proxy_list() {
-        return [this.x,this.y];
+        return [this.x, this.y];
     }
 
     get_style_props() {
         return {
-            left :   `${this.x.val}px` , 
-            top :    `${this.y.val}px` , 
-    
+            left: `${this.x.val}px`,
+            top: `${this.y.val}px`,
+
         };
     }
 
@@ -53,9 +55,8 @@ export default class Position {
 
     code() {
         return {
-            type : this.type,
-            x : this.x.val,
-            y : this.y.val,
+            x: this.x.val,
+            y: this.y.val,
         }
     }
 }
