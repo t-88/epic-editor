@@ -49,7 +49,7 @@ export default function SelectionList() {
       {
         title: "RunPong",
         on_click : (e) => {
-          localStorage.setItem("saved-scene",PONG_SRC);
+          localStorage.setItem("saved-scene",JSON.stringify(PONG_SRC));
           engine.load_from_local_storage();
         } 
       },   
