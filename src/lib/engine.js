@@ -189,6 +189,29 @@ class Engine {
     generate_src() {
     download_text_file("src.json",localStorage.getItem("saved-scene"));
     }
+
+
+    evalute_scripts() {
+        if(this.active_scene.val.comps.script) {
+            let [valid , reason] = this.active_scene.val.comps.script.evalute(); 
+            if(!valid) {
+                console.log(`[ERROR] expected '${reason}' function on scene ${!this.active_scene.val.comps.id ? "" : `with id '${this.active_scene.val.comps.id}'`}`);
+                alert(`[ERROR] expected '${reason}' function on scene`);
+                return false;
+            }
+        }
+        for (let i = 0; i < this.active_scene.val.entities.length; i++) {
+            if(this.active_scene.val.entities[i].comps.script) {
+                let [valid , reason] = this.active_scene.val.entities[i].comps.script.evalute(); 
+                if(!valid) {
+                    console.log(`[ERROR] expected '${reason}' function on scene ${!this.active_scene.val.entities[i].comps.id ? "" : `with id '${this.active_scene.val.entities[i].comps.id.id.val}'`}`);
+                    alert(`[ERROR] expected '${reason}' function on scene ${!this.active_scene.val.entities[i].comps.id ? "" : `with id '${this.active_scene.val.entities[i].comps.id.id.val}'`}`);
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }
 
 

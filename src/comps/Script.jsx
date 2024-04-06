@@ -1,5 +1,7 @@
 import { proxy, useSnapshot } from "valtio";
 import engine from "../lib/engine";
+import OPParser from "../lib/op_lang/parser";
+import OPTraspiler from "../lib/op_lang/transpiler";
 
 
 
@@ -13,12 +15,6 @@ func on_update(ID) {
 `
 
 function ScriptComponent(ref) {
-    const script_prox = useSnapshot(ref.script);
-
-    // when change store
-    engine.update_store();
-
-
     return <div className="component">
         <p className="title">Script</p>
     </div>
@@ -44,5 +40,20 @@ export default class Script {
         return this.script.val;
     }
 
+    evalute() {
+        let parser = new OPParser();
+        let transpiler = new OPTraspiler();
+        parser.parse(this.script.val);
+        transpiler.transpile(parser.program);
+
+        if(!Object.keys(transpiler.functions).includes("on_init")) {
+            return [false,`on_init`];
+        } 
+        if(!Object.keys(transpiler.functions).includes("on_update")) {
+            return [false,"on_update"];
+        } 
+
+        return [true , ""];
+    }
 }
 

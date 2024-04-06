@@ -37,7 +37,9 @@ export default function SelectionList() {
       {
         title: "Run",
         on_click : (e) => {
-          navigate("/run");
+          if(engine.evalute_scripts()) {
+            navigate("/run");
+          }
         } 
       },       
       {
