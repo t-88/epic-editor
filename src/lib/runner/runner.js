@@ -41,15 +41,15 @@ class Runner extends Functions {
     is_pressed(key) {
         return this.pressed_keys.includes(key);
     }
-    create_react({ pos, size, color, id, storage, functions }) {
+    create_rect({ pos, size, color, id, storage, functions }) {
         let rect = new Rect();
         this.entities[rect.uuid] = rect;
 
         if (pos) rect.comps["pos"] = new Position({ x: pos.x, y: pos.y });
         if (color) rect.comps["color"] = new Color({ r: color.r, g: color.g, b: color.b });
         if (size) rect.comps["size"] = rect.comps["size"] = new Size({ w: size.w, h: size.h });
-        if (storage) rect.comps["storage"] = new Storage({ map: storage.map.map((val) => val) });
-        if (id) rect.comps["id"] = new Id({ id: id.id });
+        if (storage) rect.comps["storage"] = new Storage({ map: storage.map((val) => val) });
+        if (id) rect.comps["id"] = new Id({ id: id });
         if (functions) {
             if (functions.on_update) rect.on_update = functions.on_update;
             if (functions.on_init) rect.on_init = functions.on_init;
@@ -71,7 +71,7 @@ class Runner extends Functions {
         return this.entities[id].comps[type];
     }
     create_entity(x, y, w, h, r, g, b, on_init = () => { }, on_update = () => { }) {
-        this.create_react({ pos: { x, y }, size: { w, h }, color: { r, g, b }, functions: { on_init: on_init, on_update: on_update } });
+        this.create_rect({ pos: { x, y }, size: { w, h }, color: { r, g, b }, functions: { on_init: on_init, on_update: on_update } });
     }
     remove_entity(id) {
         delete this.entities[id];
@@ -85,7 +85,7 @@ class Runner extends Functions {
         let function_names = {};
 
         if (script) {
-            this.parser.parse(script.script);
+            this.parser.parse(script);
             this.transpiler.transpile(this.parser.program, 0, [], func_prefix);
             for (let key in this.transpiler.functions) {
                 function_declarations += this.transpiler.functions[key];
@@ -102,7 +102,7 @@ class Runner extends Functions {
             this.init_src += `
             {
                 ${function_declarations}
-                self.create_react({
+                self.create_rect({
                     pos :       ${JSON.stringify(entity.comps.pos)},
                     size :      ${JSON.stringify(entity.comps.size)},
                     color :     ${JSON.stringify(entity.comps.color)},
@@ -125,7 +125,7 @@ class Runner extends Functions {
         this.init_src += `
         {
             ${function_declarations}
-            self.create_react({
+            self.create_rect({
                 pos :       ${JSON.stringify({ x: 0, y: 0, })},
                 size :      ${JSON.stringify(scene.comps.size)},
                 color :     ${JSON.stringify(scene.comps.color)},
