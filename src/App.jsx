@@ -1,5 +1,5 @@
 import './App.css';
-import SelectionList from './elements/SelectionList';
+import SelectionList from './elements/Hierarchy';
 import Canvas from './elements/Canvas';
 import engine from './lib/engine';
 import { useSnapshot } from 'valtio';

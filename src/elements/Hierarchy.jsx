@@ -1,10 +1,12 @@
-import RectEntity from "../entities/Rect";
-import SceneEntity from "../entities/Scene";
-import engine from "../lib/engine";
-import HierachyElement from "../ui/hierachy_element";
-import { useNavigate } from "react-router-dom";
-import PONG_SRC from "../games/pong.js";
 import { useSnapshot } from "valtio";
+import { useNavigate } from "react-router-dom";
+import RectEntity from "../entities/Rect.jsx";
+import SceneEntity from "../entities/Scene.jsx";
+import engine from "../lib/engine.js";
+import HierachyElement from "../ui/hierachy_element.jsx";
+import PONG_SRC from "../games/pong.js";
+import Console from "./Console";
+
 
 
 export default function SelectionList() {
@@ -85,16 +87,16 @@ export default function SelectionList() {
     }
 
     return (
-      <div id="selection-list">
+      <div id="hiercarchy">
         <div id="options-menu">
           {options.map((option,idx) => {
             return <p className="menu-button" key={idx} onClick={(e) => option.on_click(e)}>{option.title}</p>
           })}
         </div>
 
-        <p id="selection-list-title"><b>Hierachy</b></p>    
+        <p id="hiercarchy-title"><b>Hierachy</b></p>    
 
-        <section id="selection-list-hierachy">
+        <section id="hiercarchy-list" className="custom-scroll-bar">
           {
             (()=>{
               const hierachy_map = [];
@@ -106,6 +108,10 @@ export default function SelectionList() {
 
           }
         </section>
+
+        <div className="console-container">
+          <Console />
+        </div>
       </div>
     );
   }

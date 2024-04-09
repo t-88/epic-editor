@@ -1,6 +1,5 @@
 import { useSnapshot } from "valtio";
 import engine from "../lib/engine";
-import Console from "./Console";
 import OptionBtns from "./InspectorOption";
 
 
@@ -22,7 +21,6 @@ export default function Inspector() {
       <p id="inspector-title"><b>Inspector</b></p>
       <Comps selected_entity={selected_entity} />
       <OptionBtns />
-      <Console />
     </div>
   );
 }
