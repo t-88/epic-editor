@@ -52,7 +52,7 @@ body {
 
 }
 
-#options-menu {
+.options-menu {
   padding: 10px;
   background-color: #101010;
   display: flex;
@@ -419,4 +419,23 @@ body {
 
 .custom-scroll-bar::-webkit-scrollbar-thumb {
   background-color: #505050;
+}
+
+#scene-option {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+}
+#scene-option .options-menu { 
+  gap: 20px;
+  background-color: black;
+  width: fit-content;
+  margin: 0;
+  border-radius: 0 0 5px 5px ;
 }
