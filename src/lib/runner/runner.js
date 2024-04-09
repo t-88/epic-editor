@@ -26,7 +26,14 @@ class Runner extends Functions {
         this.transpiler = new OPTraspiler();
         this.init_src = "";
 
+        this.last_time = undefined;
+        this.curr_time = undefined;
+        this.dt = 0;
 
+        this.setup_events();
+    }
+
+    setup_events() {
         document.addEventListener("keydown", (e) => {
             if (this.pressed_keys.includes(e.code)) return;
             this.pressed_keys.push(e.code);
@@ -36,10 +43,11 @@ class Runner extends Functions {
             this.pressed_keys.splice(this.pressed_keys.indexOf(e.code), 1);
         }, false);
     }
-
-
     is_pressed(key) {
         return this.pressed_keys.includes(key);
+    }
+    get_dt() {
+        return this.dt;
     }
     create_rect({ pos, size, color, id, storage, functions }) {
         let rect = new Rect();
@@ -159,7 +167,12 @@ class Runner extends Functions {
                     i += 1;
                 }
                 self.render();
-                requestAnimationFrame(() => update());
+                requestAnimationFrame((now) => {
+                    if(!self.last_time) self.last_time = now;
+                    self.dt = (now - self.last_time) / 1000;
+                    self.last_time = now;
+                    update();
+                });
             }
             init();
             update();
@@ -189,6 +202,7 @@ class Runner extends Functions {
         this.scene = undefined;
         this.entities = {};
         this.pressed_keys = [];
+        this.last_time = undefined;
 
     }
     stop() {

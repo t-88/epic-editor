@@ -1,7 +1,7 @@
 - [x] cleaner output code, id.id , script.script bs
 - [x] script make sure, on_update and on_init exist 
 - [x] better input system
-- color selector
+- [x] color selector
 - add delta time to update, use a helper function, it will be fine :)
 - multiple scenes?
 - rewrite op-langauge, add more features

@@ -18,9 +18,10 @@ export default function OptionBtns() {
 
 
     function on_remove(e) {
+        engine.selected_entity.val.remove();
         engine.active_scene.val.entities.splice(selected_entity.val.index, 1);
-        engine.update_store();
         engine.on_entity_select(engine.active_scene.val,e);
+        engine.update_store();
     }
 
     return <center id="add-component-btn" >

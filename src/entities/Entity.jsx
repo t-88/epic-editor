@@ -40,7 +40,11 @@ export default class Enitity {
         this.base_renderer = ({self,jsx_props,children}) => Entity({self,jsx_props,children});
         this.renderer = () => this.base_renderer(this,{});
     }
-
+    remove() {
+        //NOTE: too lazy to anything about it
+        this.comps.size.w.val = 0;
+        this.comps.size.h.val = 0;
+    }
     add_component(type) {
         if(Object.keys(this.comps).includes(type) || this.ignored_comps.includes(type)) {
             return;
@@ -66,5 +70,7 @@ export default class Enitity {
             comps,
         };  
     }
+
+
 
 }
