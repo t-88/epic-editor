@@ -173,6 +173,7 @@ class Engine {
         localStorage.clear();
         this.active_scene.val = new SceneEntity();
         this.selected_entity.val = this.active_scene.val;
+        this.update_store();
     }
 
 
