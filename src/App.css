@@ -1,4 +1,5 @@
-html ,body {
+html,
+body {
   width: 100%;
   height: 100%;
   background-color: black;
@@ -20,6 +21,7 @@ html ,body {
   position: relative;
   overflow: hidden;
 }
+
 #selection-list {
   flex: 2;
   width: 20%;
@@ -38,6 +40,7 @@ html ,body {
   background: #181818;
   position: relative;
 }
+
 #canvas {
   background-color: white;
   position: relative;
@@ -45,12 +48,15 @@ html ,body {
 }
 
 
-#status-area {
+#inspector {
   flex: 2;
   padding: 0 4px 0 4px;
+  display: flex;
+  flex-direction: column;
 }
-#status-area #status-area-title { 
-  padding: 0 10px 0 10px ;
+
+#inspector #inspector-title {
+  padding: 0 10px 0 10px;
 }
 
 
@@ -66,11 +72,12 @@ html ,body {
   gap: 10px;
 }
 
-.inline-input  input{
+.inline-input input {
   width: 50px;
   height: min-content;
   text-align: center;
 }
+
 .expanded-input input {
   width: 100%;
   text-align: start;
@@ -80,7 +87,7 @@ html ,body {
 
 .component {
   color: white;
-  
+
   padding: 0 0 10px 0;
 
 
@@ -88,6 +95,7 @@ html ,body {
   margin-bottom: 10px;
 
 }
+
 .component .title {
   padding: 5px 20px 5px 20px;
   margin: 0 0 15px 0;
@@ -95,6 +103,7 @@ html ,body {
   background-color: #131313;
   box-shadow: #202020 0px 2px 0px;
 }
+
 .component .title-icon {
   display: flex;
   justify-content: space-between;
@@ -102,12 +111,14 @@ html ,body {
   padding: 5px 20px 0 20px;
   margin: 0 0 15px 0;
 }
+
 .component .title-icon p {
   font-weight: bold;
   background-color: #131313;
   padding: 0;
   margin: 0;
 }
+
 .component .title-icon img {
   cursor: pointer;
 }
@@ -119,9 +130,10 @@ html ,body {
   flex-wrap: wrap;
 
   padding: 0 20px 0 20px;
-  border: 1px white ;
+  border: 1px white;
 }
-.component-props-row p{ 
+
+.component-props-row p {
   margin: 5px 0;
   width: 10px;
 }
@@ -135,14 +147,16 @@ html ,body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 0 0 0 0 ;
+  margin: 0 0 0 0;
   padding: 0;
 }
+
 .script-view p {
   cursor: pointer;
   padding: 0;
-  margin: 0 ;
+  margin: 0;
 }
+
 .script-view img {
   cursor: pointer;
 }
@@ -157,6 +171,7 @@ html ,body {
 .more-icon {
   position: relative;
 }
+
 .popup-menu {
   position: absolute;
   width: 80px;
@@ -168,20 +183,18 @@ html ,body {
 
 
   background-color: white;
-  outline: solid 2px rgb(210
-  , 210
-  , 210
-  );
+  outline: solid 2px rgb(210, 210, 210);
   color: black;
 
 }
-.popup-menu p { 
+
+.popup-menu p {
   cursor: pointer;
   margin: 0 0 0 0;
   padding: 5px 10px 5px 10px;
 }
 
-.popup-menu p:hover { 
+.popup-menu p:hover {
   background: rgb(220, 220, 220)
 }
 
@@ -199,6 +212,7 @@ html ,body {
   flex-direction: column;
   overflow: hidden;
 }
+
 #code-editor .window-bar {
   width: 100%;
   height: 30px;
@@ -217,36 +231,39 @@ html ,body {
 }
 
 #selection-list-title {
-  padding: 0 10px 0 10px ;
+  padding: 0 10px 0 10px;
 }
 
 #options-menu {
   padding: 10px;
-  background-color: #101010; 
+  background-color: #101010;
   display: flex;
   gap: 10px;
   font-weight: bold;
   margin: 5px;
   flex-wrap: wrap;
 }
-.menu-button { 
+
+.menu-button {
   margin: 0;
   padding: 8px;
   cursor: pointer;
   border-radius: 5px;
   display: inline;
   font-weight: bold;
-} 
-.menu-button:hover { 
+}
+
+.menu-button:hover {
   background-color: #252525;
 }
-.menu-button:active { 
+
+.menu-button:active {
   background-color: #303030;
 }
 
 
 #selection-list-hierachy {
-  background-color: #101010; 
+  background-color: #101010;
   margin: 10px;
   padding: 15px;
   display: flex;
@@ -257,19 +274,26 @@ html ,body {
   box-sizing: border-box;
 }
 
-.hierachy-element  * {
+.hierachy-element * {
   margin: 0;
   padding: 0;
 }
-.hierachy-element p { 
+
+.hierachy-element p {
   display: inline-block;
   cursor: pointer;
 }
-.hierachy-element p:hover { 
+
+.hierachy-element p:hover {
   font-weight: bold;
 }
+
 #add-component-btn {
-  margin: 20px 0 ;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 20px 20px;
+
 }
 
 #add-component-btn .menu-button {
@@ -285,6 +309,7 @@ html ,body {
   gap: 20px;
   margin: 10px 20px;
 }
+
 .storage-input input {
   width: 100%;
   text-align: start;
@@ -300,6 +325,7 @@ html ,body {
   padding-bottom: 10px;
 
 }
+
 #code-editor-area .top-bar {
   width: 100%;
   height: 5px;
@@ -312,7 +338,8 @@ html ,body {
   width: 100%;
   height: 100%;
 }
-#code-container > div:nth-last-of-type(1) { 
+
+#code-container>div:nth-last-of-type(1) {
   height: 100%;
   overflow: hidden;
 }
@@ -321,9 +348,63 @@ html ,body {
 
 
 .cm-scroller {
-  -ms-overflow-style: none;  /* Internet Explorer 10+ */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  /* Internet Explorer 10+ */
+  scrollbar-width: none;
+  /* Firefox */
 }
+
 .cm-scroller::-webkit-scrollbar {
-  display: none;  /* Safari and Chrome */
+  display: none;
+  /* Safari and Chrome */
+}
+
+
+#console {
+  width: 100%;
+  height: 200px;
+  background: #181818;
+  margin-top: auto;
+  margin-bottom: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.console-title {
+  padding: 10px 20px;
+  margin: 0;
+  border-bottom: solid 2px #202020;
+}
+
+#log-area {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+}
+
+#log-area p { 
+  margin: 0;
+  margin-bottom: 5px;
+  padding: 5px;
+  border-bottom: solid 2px #202020;
+  text-wrap: wrap;
+  word-wrap: break-word;
+  cursor: pointer;
+}
+
+
+#log-area::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #323232;
+}
+
+#log-area::-webkit-scrollbar {
+  width: 6px;
+  background-color: #323232;
+}
+
+#log-area::-webkit-scrollbar-thumb {
+  background-color: #505050;
 }

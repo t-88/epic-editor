@@ -1,10 +1,10 @@
 import './App.css';
 import SelectionList from './elements/SelectionList';
 import Canvas from './elements/Canvas';
-import StatusArea from './elements/StatusArea';
 import engine from './lib/engine';
 import { useSnapshot } from 'valtio';
 import runner from './lib/runner/runner';
+import Inspector from './elements/Inspector';
 
 export default function App() {
   const popup_menu_prox = {
@@ -18,7 +18,7 @@ export default function App() {
     <div id='root' onClick={() => { engine.window_clicked();}}>
       <SelectionList/>
       <Canvas/>
-      <StatusArea/>
+      <Inspector/>
       {
         (()=>{
           if(popup_menu_prox.visible.val) {
