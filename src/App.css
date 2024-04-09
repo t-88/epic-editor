@@ -28,6 +28,7 @@ body {
   display: flex;
   flex-direction: column;
 }
+
 #hiercarchy-title {
   padding: 0 10px 0 10px;
 }
@@ -44,7 +45,7 @@ body {
   box-sizing: border-box;
   overflow: hidden;
   overflow-y: scroll;
-  
+
 }
 
 .console-container {
@@ -395,7 +396,7 @@ body {
   flex-direction: column;
 }
 
-#log-area p { 
+#log-area p {
   margin: 0;
   margin-bottom: 5px;
   padding: 5px;
@@ -430,12 +431,32 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  
+
 }
-#scene-option .options-menu { 
+
+#scene-option .options-menu {
   gap: 20px;
   background-color: black;
   width: fit-content;
   margin: 0;
-  border-radius: 0 0 5px 5px ;
+  border-radius: 0 0 5px 5px;
+}
+
+
+.color-selector {
+  width: 25px;
+  height: 25px;
+  border-radius: 3px;
+  position: relative;
+  margin-bottom: 5px;
+  border: solid 2px white
+
+}
+
+.color-selector input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  z-index: -1;
+
 }
