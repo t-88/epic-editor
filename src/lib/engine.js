@@ -74,8 +74,11 @@ class Engine {
     load_from_local_storage() {
         this.active_scene.val = new SceneEntity();
         if (!localStorage.getItem("saved-scene")) { return; }
-
-        this.active_scene.val.load(JSON.parse(localStorage.getItem("saved-scene")));
+        try {
+            this.active_scene.val.load(JSON.parse(localStorage.getItem("saved-scene")));
+        } catch(e) {
+            this.update_store();
+        }
     }
 
 
