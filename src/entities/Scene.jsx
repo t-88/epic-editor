@@ -22,9 +22,7 @@ export default class SceneEntity extends Entity {
     
     constructor() {
         super();
-
         this.type = "Scene";
-
         this.entities = proxy([]);
         this.comps.size = new Size(400,600);
         this.comps.color =  new Color(255,255,255);
@@ -42,6 +40,7 @@ export default class SceneEntity extends Entity {
     }
 
     add_entity(entity) {
+        entity.index = this.entities.length; 
         this.entities.push(entity);
     }
 
@@ -53,6 +52,7 @@ export default class SceneEntity extends Entity {
             if(data.children[i].type == "Rect") {
                 let rect = new RectEntity();
                 rect.load(data.children[i]);
+                rect.index = this.entities.length; 
                 this.entities.push(rect);
             } else {
                 alert("[LOAD FROM LOCAL STORAGE] unkown type :(");

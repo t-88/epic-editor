@@ -7,12 +7,14 @@ import Entity from "./Entity.jsx";
 
 
 export default class RectEntity extends Entity {
-    constructor() {
+    constructor(index) {
         super();
         this.type = "Rect";
         this.comps.pos = new Position(0,0);
         this.comps.size =  new Size(50,50);
         this.comps.color = new Color(125,125,125);
+
+        this.index = index;
 
         this.comps.id.id.val = "Rect";
 

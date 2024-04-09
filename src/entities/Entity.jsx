@@ -30,9 +30,8 @@ function Entity({self,jsx_props,children =[]}) {
 }
 
 export default class Enitity {
-
     constructor() { 
-        this.uuid = crypto.randomUUID();
+    this.uuid = crypto.randomUUID();
         this.type = "Entity";
         this.comps = {
             id: new Id("Entity")

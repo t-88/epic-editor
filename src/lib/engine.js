@@ -54,7 +54,6 @@ class Engine {
 
 
         this.error_messages = proxy([]);
-
         this.events();
     }
 
@@ -83,6 +82,7 @@ class Engine {
     select_element(element_type) {
         this.selected_element = element_type;
         this.active_scene.val.add_entity(new RectEntity());
+        engine.update_store();
     }
     on_canvas_click(mouse_event) {
         if (this.selected_element == "") return
@@ -140,6 +140,7 @@ class Engine {
             if (this.dragged_entity_info.entity.val) {
                 this.dragged_entity_info.entity.val.comps.pos.x.val = Math.round(e.clientX - this.canvas_rect.x - this.dragged_entity_info.offset.x);
                 this.dragged_entity_info.entity.val.comps.pos.y.val = Math.round(e.clientY - this.canvas_rect.y - this.dragged_entity_info.offset.y);
+                engine.update_store();
             }
 
             if (this.code_editor.dragged) {

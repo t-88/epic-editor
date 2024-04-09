@@ -1,5 +1,6 @@
 - [x] cleaner output code, id.id , script.script bs
-- [~] script make sure, on_update and on_init exist 
-- [~] better input system
+- [x] script make sure, on_update and on_init exist 
+- [x] better input system
 - color selector
 - add delta time to update, use a helper function, it will be fine :)
+- multiple scenes?
