@@ -1,0 +1,14 @@
+{
+  "name": "epic",
+  "version": "0.1.0",
+  "files": [
+    "epic_bg.wasm",
+    "epic.js",
+    "epic.d.ts"
+  ],
+  "module": "epic.js",
+  "types": "epic.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
