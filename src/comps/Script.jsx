@@ -1,9 +1,5 @@
-import { proxy, useSnapshot } from "valtio";
-import engine from "../lib/engine";
-import OPParser from "../lib/op_lang/parser";
-import OPTraspiler from "../lib/op_lang/transpiler";
-
-
+import { proxy } from "valtio";
+import { transpile } from "../op_lang/wapper";
 
 const DEFAULT_SCRIPT = `func on_init(ID) {
 
@@ -40,20 +36,5 @@ export default class Script {
         return this.script.val;
     }
 
-    evalute() {
-        let parser = new OPParser();
-        let transpiler = new OPTraspiler();
-        parser.parse(this.script.val);
-        transpiler.transpile(parser.program);
-
-        if(!Object.keys(transpiler.functions).includes("on_init")) {
-            return [false,`on_init`];
-        } 
-        if(!Object.keys(transpiler.functions).includes("on_update")) {
-            return [false,"on_update"];
-        } 
-
-        return [true , ""];
-    }
 }
 

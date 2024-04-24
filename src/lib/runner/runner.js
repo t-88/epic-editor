@@ -1,21 +1,19 @@
 import Id from "./components/Id";
-import OPParser from "../op_lang/parser";
-import OPTraspiler from "../op_lang/transpiler";
+import { init_wasm ,transpile } from "../../op_lang/wapper";
+
+
 import Color from "./components/Color";
 import Position from "./components/Position";
 import Size from "./components/Size";
 import Storage from "./components/Storage";
 import Rect from "./entities/RectEntity";
-import Functions from "./utils/functions";
 import shared_globals from "./utils/globals";
 
 
 
 
-class Runner extends Functions {
-    constructor() {
-        super();
-
+class Runner {
+    constructor()  {
         this.canvas_ref = undefined;
         this.ctx = undefined;
         this.scene = undefined;
@@ -24,8 +22,7 @@ class Runner extends Functions {
         this.pressed_keys = [];
         this.is_running = false;
 
-        this.parser = new OPParser();
-        this.transpiler = new OPTraspiler();
+
         this.init_src = "";
 
         this.last_time = undefined;
@@ -45,65 +42,25 @@ class Runner extends Functions {
             this.pressed_keys.splice(this.pressed_keys.indexOf(e.code), 1);
         }, false);
     }
-    is_pressed(key) {
-        return this.pressed_keys.includes(key);
-    }
-    get_dt() {
-        return this.dt;
-    }
-    create_rect({ pos, size, color, id, storage, functions }) {
-        let rect = new Rect();
-        this.entities[rect.uuid] = rect;
 
-        if (pos) rect.comps["pos"] = new Position({ x: pos.x, y: pos.y });
-        if (color) rect.comps["color"] = new Color({ r: color.r, g: color.g, b: color.b });
-        if (size) rect.comps["size"] = rect.comps["size"] = new Size({ w: size.w, h: size.h });
-        if (storage) rect.comps["storage"] = new Storage({ map: storage.map((val) => val) });
-        if (id) rect.comps["id"] = new Id({ id: id });
-        if (functions) {
-            if (functions.on_update) rect.on_update = functions.on_update;
-            if (functions.on_init) rect.on_init = functions.on_init;
-        }
-    }    
-    get_entity_by_id(id) {
-        for (let key in this.entities) {
-            if (!this.entities[key].comps.id) continue;
-            if (id == this.entities[key].comps.id.id) {
-                return this.entities[key].uuid
-            }
-        }
-        alert("entity not found");
-    }
-    get_component(id, type) {
-        if (type == "storage") {
-            return this.entities[id].comps[type].map;
-        }
-        return this.entities[id].comps[type];
-    }
-    create_entity(x, y, w, h, r, g, b, on_init = () => { }, on_update = () => { }) {
-        this.create_rect({ pos: { x, y }, size: { w, h }, color: { r, g, b }, functions: { on_init: on_init, on_update: on_update } });
-    }
-    remove_entity(id) {
-        delete this.entities[id];
-    }
-    init() {
-        location.reload();
-    }
-    clear_entities() { }
+
+
+
     load_functions(script, func_prefix = "") {
-        let function_declarations = "";
+        let code = "";
         let function_names = {};
 
         if (script) {
-            this.parser.parse(script);
-            this.transpiler.transpile(this.parser.program, 0, [], func_prefix);
-            for (let key in this.transpiler.functions) {
-                function_declarations += this.transpiler.functions[key];
-            }
-            function_names.on_update = this.transpiler.functions[func_prefix + `on_update`] ? func_prefix + `on_update` : undefined
-            function_names.on_init = this.transpiler.functions[func_prefix + `on_init`] ? func_prefix + `on_init` : undefined
+            // console.log(script)
+            let {status, content} = transpile(script,func_prefix);
+            code = content[0];
+            console.assert(status == 0, "unreachable script status must be 0");
+
+
+            function_names.on_update = func_prefix + `on_update`;
+            function_names.on_init = func_prefix + `on_init`;
         }
-        return [function_declarations, function_names]
+        return [code, function_names]
     }
     load_entities(scene) {
         for (let i = 0; i < scene.children.length; i++) {
@@ -112,7 +69,7 @@ class Runner extends Functions {
             this.init_src += `
             {
                 ${function_declarations}
-                self.create_rect({
+                sys__create_rect({
                     pos :       ${JSON.stringify(entity.comps.pos)},
                     size :      ${JSON.stringify(entity.comps.size)},
                     color :     ${JSON.stringify(entity.comps.color)},
@@ -135,7 +92,7 @@ class Runner extends Functions {
         this.init_src += `
         {
             ${function_declarations}
-            self.create_rect({
+            sys__create_rect({
                 pos :       ${JSON.stringify({ x: 0, y: 0, })},
                 size :      ${JSON.stringify(scene.comps.size)},
                 color :     ${JSON.stringify(scene.comps.color)},
@@ -150,6 +107,7 @@ class Runner extends Functions {
         `;
     }
     create_js_src(init) {
+        
         return `
         (self) => {
             // consts
@@ -180,7 +138,9 @@ class Runner extends Functions {
             update();
         }`;
     }
-    load_app() {
+    async load_app() {
+        await init_wasm(); 
+
         this.ctx = this.canvas_ref.getContext("2d");
         this.init_src = "";
 
@@ -189,6 +149,7 @@ class Runner extends Functions {
         this.load_entities(scene);
 
         let src = this.create_js_src(this.init_src);
+        console.log(src);
         eval(src)(this);
     }
 
@@ -214,8 +175,64 @@ class Runner extends Functions {
 }
 
 
-
 const runner = new Runner();
+
+
+function sys__AABB(x1,y1,w1,h1,x2,y2,w2,h2){
+    return x1 + w1 > x2 && y1 + h1 > y2 && x2 + w2 > x1 && y2 + h2 > y1
+}
+function sys__randint(num) {
+    return (Math.random() * 1000) % num
+} 
+function sys__is_pressed(key) {
+    return runner.pressed_keys.includes(key);
+}
+function sys__get_dt() {
+    return runner.dt;
+}
+function sys__create_rect({ pos, size, color, id, storage, functions }) {
+    let rect = new Rect();
+    runner.entities[rect.uuid] = rect;
+
+    if (pos) rect.comps["pos"] = new Position({ x: pos.x, y: pos.y });
+    if (color) rect.comps["color"] = new Color({ r: color.r, g: color.g, b: color.b });
+    if (size) rect.comps["size"] = rect.comps["size"] = new Size({ w: size.w, h: size.h });
+    if (storage) rect.comps["storage"] = new Storage({ map: storage.map((val) => val) });
+    if (id) rect.comps["id"] = new Id({ id: id });
+    if (functions) {
+        if (functions.on_update) rect.on_update = functions.on_update;
+        if (functions.on_init) rect.on_init = functions.on_init;
+    }
+}    
+function sys__get_entity_by_id(id) {
+    for (let key in runner.entities) {
+        if (!runner.entities[key].comps.id) continue;
+        if (id == runner.entities[key].comps.id.id) {
+            return runner.entities[key].uuid
+        }
+    }
+    alert("entity not found");
+}
+function sys__get_component(id, type) {
+    if (type == "storage") {
+        return runner.entities[id].comps[type].map;
+    }
+    return runner.entities[id].comps[type];
+}
+function sys__create_entity(on_init, on_update,{x = 0, y = 0, w = 0, h = 0, r = 0, g = 0, b = 0}) {
+    sys__create_rect({ pos: { x, y }, size: { w, h }, color: { r, g, b }, functions: { on_init: on_init, on_update: on_update } });
+}
+function sys__remove_entity(id) {
+    delete runner.entities[id];
+}
+
+function sys__clear_entities() { }
+
+function sys__init() {
+    location.reload();
+}
+
+
 export default runner;
 
 

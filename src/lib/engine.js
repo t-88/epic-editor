@@ -71,11 +71,6 @@ class Engine {
             this.mouse_move(e);
         }
 
-        document.body.onkeydown = (e) => {
-            if(e.key == "r") {
-                this.run_game();
-            }
-        }
     }
     load_from_local_storage() {
         this.active_scene.val = new SceneEntity();
@@ -244,6 +239,8 @@ class Engine {
                 }
                 this.console.push(...content)
             }
+            console.log(content[0]);
+
         }
         return success;
     }
@@ -252,3 +249,5 @@ class Engine {
 
 const engine = new Engine();
 export default engine;
+
+
