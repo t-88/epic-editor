@@ -2,6 +2,6 @@
 - [x] script make sure, on_update and on_init exist 
 - [x] better input system
 - [x] color selector
-- add delta time to update, use a helper function, it will be fine :)
-- multiple scenes?
-- rewrite op-langauge, add more features
+- [x] add delta time to update
+- [x] ability to remove components
+- [!] rewrite op-langauge, add more features

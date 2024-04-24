@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import engine from "../lib/engine"
 import CodeEditor from './CodeEditor';
 import PONG_SRC from "../games/pong";
+import transpile from "../op_lang/wapper";
 
 
 export default function Canvas() {
@@ -26,19 +27,19 @@ export default function Canvas() {
       on_click: (e) => {
         engine.reset();
       }
-    }, 
+    },
     {
       title: "Generate",
       on_click: (e) => {
         engine.generate_src();
       }
-    },   
+    },
   ];
 
   function on_run() {
-    if (engine.evalute_scripts()) {
-      navigate("/run");
-    }
+    engine.run_game(() => {
+      navigate("/run")
+    })
   }
 
 
@@ -50,7 +51,7 @@ export default function Canvas() {
     <div id="canvas-container">
       <div id="scene-option">
         <div className="options-menu">
-          {options.map((option, idx)  => {
+          {options.map((option, idx) => {
             return <p className="menu-button" key={idx} onClick={(e) => option.on_click(e)}>{option.title}</p>
           })}
           <p className="menu-button" onClick={on_run}>{"Run"}</p>

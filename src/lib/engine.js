@@ -3,7 +3,7 @@ import RectEntity from '../entities/Rect';
 import SceneEntity from '../entities/Scene';
 import PopupMenu from "../elements/PopupMenu";
 import { COMP_SCRIPT } from './consts';
-import Msg from './../models/Msg';
+import { transpile } from '../op_lang/wapper';
 
 
 
@@ -53,7 +53,7 @@ class Engine {
         });
 
 
-        this.error_messages = proxy([]);
+        this.console = proxy([]);
         this.events();
     }
 
@@ -70,15 +70,21 @@ class Engine {
         document.body.onmousemove = (e) => {
             this.mouse_move(e);
         }
+
+        document.body.onkeydown = (e) => {
+            if(e.key == "r") {
+                this.run_game();
+            }
+        }
     }
     load_from_local_storage() {
         this.active_scene.val = new SceneEntity();
-        if (!localStorage.getItem("saved-scene")) { 
+        if (!localStorage.getItem("saved-scene")) {
             this.update_store();
         }
         try {
             this.active_scene.val.load(JSON.parse(localStorage.getItem("saved-scene")));
-        } catch(e) {
+        } catch (e) {
             this.update_store();
         }
     }
@@ -195,34 +201,51 @@ class Engine {
     }
 
 
+    run_game(callback) {
+        if (this.evalute_scripts()) {
+            callback();
+        }
+    }
+
     evalute_scripts() {
-        this.error_messages.length = 0;
+        let scripts = [];
+        this.console.length = 0;
 
         if (this.active_scene.val.comps.script) {
-            let [valid, reason] = this.active_scene.val.comps.script.evalute();
-            if (!valid) {
-                this.error_messages.push(new Msg(
-                    `expected ${reason} function on scene ${!this.active_scene.val.comps.id ? "" : `with id '${this.active_scene.val.comps.id.id.val}'`}`,
-                    (e) => {
-                        this.on_entity_select(this.active_scene.val, e);
-                    }
-                ));
-            }
+            scripts.push({
+                entity: this.active_scene.val,
+                entity_type: this.active_scene.val.type,
+                src: this.active_scene.val.comps.script.script.val,
+            });
         }
+
         for (let i = 0; i < this.active_scene.val.entities.length; i++) {
-            if (this.active_scene.val.entities[i].comps.script) {
-                let [valid, reason] = this.active_scene.val.entities[i].comps.script.evalute();
-                if (!valid) {
-                    this.error_messages.push(new Msg(
-                        `expected ${reason} function on scene ${!this.active_scene.val.entities[i].comps.id ? "" : `with id '${this.active_scene.val.entities[i].comps.id.id.val}'`}`,
-                        (e) => {
-                            this.on_entity_select(this.active_scene.val.entities[i], e);
+            scripts.push({
+                entity: this.active_scene.val.entities[i],
+                entity_type: this.active_scene.val.entities[i].type,
+                src: this.active_scene.val.entities[i].comps.script.script.val,
+            });
+        }
+
+        let success = true;
+        for (let i = 0; i < scripts.length; i++) {
+            let { status, content } = transpile(scripts[i].src);
+
+            if (status != 0) {
+                success = false;
+                for (let j = 0; j < content.length; j++) {
+                    content[j] = {
+                        msg: content[j],
+                        callback: (e) => {
+                            this.code_editor.height = 500;
+                            this.on_entity_select(scripts[i].entity,e)
                         }
-                    ));                    
+                    }
                 }
+                this.console.push(...content)
             }
         }
-        return this.error_messages.length == 0;
+        return success;
     }
 }
 
