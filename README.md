@@ -17,6 +17,5 @@ the idea is that you create your game using the editor drag and drop / coding fu
 <br/>
 <center> <img src="preview/code_editor.png" width="900" /> </center>   
 <br/>
-<center> 
-<video src='preview/pong_game.mp4' width="900"/>
-</center>   
+
+preview/pong_game.mp4
