@@ -76,11 +76,13 @@ body {
   position: relative;
 }
 
+
 #canvas {
   background-color: white;
   position: relative;
   overflow: hidden;
 }
+
 
 
 #inspector {
@@ -315,6 +317,11 @@ body {
 
 .scene-entity {
   overflow: hidden;
+  outline: solid 2px grey;
+}
+canvas {
+  
+  border:   solid 2px grey;
 }
 
 .storage-input {
