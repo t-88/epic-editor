@@ -2,7 +2,6 @@ import { proxy, useSnapshot } from "valtio";
 import Color from "../comps/Color.jsx";
 import Size from "../comps/Size.jsx";
 import engine from "../lib/engine.js";
-import Script from "../comps/Script.jsx";
 import RectEntity from "./Rect.jsx";
 import Entity  from "./Entity.jsx";
 import { COMP_POS } from "../lib/consts.js";

@@ -215,11 +215,13 @@ class Engine {
         }
 
         for (let i = 0; i < this.active_scene.val.entities.length; i++) {
-            scripts.push({
-                entity: this.active_scene.val.entities[i],
-                entity_type: this.active_scene.val.entities[i].type,
-                src: this.active_scene.val.entities[i].comps.script.script.val,
-            });
+            if(this.active_scene.val.entities[i].comps.script) {
+                scripts.push({
+                    entity: this.active_scene.val.entities[i],
+                    entity_type: this.active_scene.val.entities[i].type,
+                    src: this.active_scene.val.entities[i].comps.script.script.val,
+                });
+            }
         }
 
         let success = true;
@@ -239,8 +241,6 @@ class Engine {
                 }
                 this.console.push(...content)
             }
-            console.log(content[0]);
-
         }
         return success;
     }

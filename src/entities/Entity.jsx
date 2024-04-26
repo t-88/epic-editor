@@ -1,14 +1,20 @@
-import Position from "../comps/Position.jsx";
-import Size from "../comps/Size.jsx";
-import Script from "../comps/Script.jsx";
-import Color from "../comps/Color.jsx";
-import COMP_MAP from "../lib/COMP_MAP.js";
 import { proxy, useSnapshot } from "valtio";
-import { COMP_POS } from "../lib/consts.js";
-import { watch } from 'valtio/utils'
-import Id from "../comps/Id.jsx";
+import Color from "../comps/Color";
+import Position from "../comps/Position";
+import Script from "../comps/Script";
+import Size from "../comps/Size";
+import Storage from "../comps/Storage";
+import Id from "../comps/Id";
 
 
+const COMP_MAP = {
+    "pos": Position,
+    "size": Size,
+    "color": Color,
+    "script": Script,
+    "id": Id,
+    "storage": Storage,
+};;
 
 function Entity({self,jsx_props,children =[]}) {
     let style_props = {};
