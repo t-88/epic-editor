@@ -1,6 +1,6 @@
 import { init_wasm, transpile } from "../../op_lang/wapper";
 import kaboom from "kaboom";
-import Rectangle_new from "./rect";
+import Rectangle_new from "./rect.js";
 const shared_globals =  `
 const Components = {
     "Position" : "Position" ,
