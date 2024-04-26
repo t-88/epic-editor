@@ -13,9 +13,8 @@ the idea is that you create your game using the editor drag and drop / coding fu
 
 
 ## Preview
-<center> <img src="preview/epic_editor.png" width="900" /> </center>    
+<center> <img src="preview/epic-editor.png" width="900" /> </center>    
 <br/>
-<center> <img src="preview/code_editor.png" width="900" /> </center>   
+<center> <img src="preview/code-editor.png" width="900" /> </center>   
 <br/>
-
-preview/pong_game.mp4
+<center> <img src="preview/pong_game.gif" width="900" /> </center>   
