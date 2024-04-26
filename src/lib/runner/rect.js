@@ -7,8 +7,7 @@ function uuidv4() {
 function empty(ID) {
 
 }
-
-export default class Rectangle {
+class Rectangle {
     constructor(init , update, { pos = {x : 0, y : 0} , size = {w : 0, h : 0}, color = {r : 0, g : 0 , b : 0} ,id = undefined, storage = []} ) {
         this.uuid = uuidv4();
         if (!id) id = this.uuid;
@@ -36,3 +35,9 @@ export default class Rectangle {
         else if (comp_typ == "Storage") return this.storage    
     }
 }
+
+function Rectangle_new(init , update, { pos = {x : 0, y : 0} , size = {w : 0, h : 0}, color = {r : 0, g : 0 , b : 0} ,id = undefined, storage = []} ) {
+    return new Rectangle(init , update, { pos , size , color , id , storage}); 
+}
+
+export default Rectangle_new;

@@ -1,7 +1,6 @@
 import { init_wasm, transpile } from "../../op_lang/wapper";
 import kaboom from "kaboom";
-import Rectangle from "./rect";
-
+import Rectangle_new from "./rect";
 const shared_globals =  `
 const Components = {
     "Position" : "Position" ,
@@ -70,7 +69,7 @@ function sys__create_entity(on_init, on_update, { x = 0, y = 0, w = 0, h = 0, r 
         { storage },
         { id }
     ]);
-    let rect = new Rectangle(on_init, on_update, { pos: kaboom_rect.pos, size: {w : kaboom_rect.width, h: kaboom_rect.height}, color: kaboom_rect.color, storage: storage, id: id });
+    let rect = Rectangle_new(on_init, on_update, { pos: kaboom_rect.pos, size: {w : kaboom_rect.width, h: kaboom_rect.height}, color: kaboom_rect.color, storage: storage, id: id });
     rect.ref = kaboom_rect;
     runner.entities[rect.uuid] = rect; 
 }
