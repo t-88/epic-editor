@@ -1,6 +1,5 @@
 import { init_wasm, transpile } from "../op_lang/wapper.js";
 import kaboom from "kaboom";
-import Rectangle_new from "./rectangle.js";
 const shared_globals =  `
 const Components = {
     "Position" : "Position" ,
@@ -17,6 +16,44 @@ const Keys = {
     "Down": "down",
 };
 `;
+
+
+function uuidv4() {
+    return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
+      (+c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> +c / 4).toString(16)
+    );
+  }
+function empty(ID) {
+
+}
+class Rectangle {
+    constructor(init , update, { pos = {x : 0, y : 0} , size = {w : 0, h : 0}, color = {r : 0, g : 0 , b : 0} ,id = undefined, storage = []} ) {
+        this.uuid = uuidv4();
+        if (!id) id = this.uuid;
+
+        this.pos = pos ;
+        this.size = size ;
+        this.color =  color;
+        this.id = id; 
+        this.storage = {};
+        for (let i = 0; i < storage.length; i++) {
+            this.storage[storage[i]["key"]] = Number.parseFloat(storage[i]["val"])
+        }
+
+        this.update = update ?? empty;
+        this.init = init ?? empty;
+
+        this.ref = undefined;
+
+    }
+    get_component(comp_typ) {
+        if (comp_typ == "Position") return this.pos
+        else if (comp_typ == "Size")   return this.size
+        else if (comp_typ == "Color")  return this.color
+        else if (comp_typ == "Id")  return this.id
+        else if (comp_typ == "Storage") return this.storage    
+    }
+}
 
 
 function sys__randint(num) {
@@ -69,8 +106,7 @@ function sys__create_entity(on_init, on_update, { x = 0, y = 0, w = 0, h = 0, r 
         { storage },
         { id }
     ]);
-    console.log(Rectangle_new);
-    let rect = Rectangle_new(on_init, on_update, { pos: kaboom_rect.pos, size: {w : kaboom_rect.width, h: kaboom_rect.height}, color: kaboom_rect.color, storage: storage, id: id });
+    let rect = new Rectangle(on_init, on_update, { pos: kaboom_rect.pos, size: {w : kaboom_rect.width, h: kaboom_rect.height}, color: kaboom_rect.color, storage: storage, id: id });
     rect.ref = kaboom_rect;
     runner.entities[rect.uuid] = rect; 
 }
