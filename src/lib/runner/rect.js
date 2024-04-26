@@ -8,7 +8,7 @@ function empty(ID) {
 
 }
 
-export default class Rect {
+export default class Rectangle {
     constructor(init , update, { pos = {x : 0, y : 0} , size = {w : 0, h : 0}, color = {r : 0, g : 0 , b : 0} ,id = undefined, storage = []} ) {
         this.uuid = uuidv4();
         if (!id) id = this.uuid;
@@ -36,4 +36,3 @@ export default class Rect {
         else if (comp_typ == "Storage") return this.storage    
     }
 }
-
