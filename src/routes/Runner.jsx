@@ -1,4 +1,4 @@
-import runner from "../lib/runner/runner";
+import runner from "../lib/runner";
 import "./runner.css";
 import { useEffect, useRef } from "react";
 

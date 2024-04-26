@@ -1,5 +1,5 @@
 import engine from './lib/engine';
-import runner from './lib/runner/runner';
+import runner from './lib/runner';
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import './index.css';
 import React from 'react';

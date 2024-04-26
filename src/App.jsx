@@ -3,7 +3,7 @@ import SelectionList from './elements/Hierarchy';
 import Canvas from './elements/Canvas';
 import engine from './lib/engine';
 import { useSnapshot } from 'valtio';
-import runner from './lib/runner/runner';
+import runner from './lib/runner';
 import Inspector from './elements/Inspector';
 
 export default function App() {
