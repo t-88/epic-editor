@@ -8,9 +8,9 @@ const PONG_SRC =
             "h": 600
         },
         "color": {
-            "r": 255,
-            "g": 255,
-            "b": 255
+            "r": 0,
+            "g": 0,
+            "b": 0
         },
         "script": "func on_block_init(ID) { \n}\nfunc on_block_update(ID) {\n    let pos = $.get_component(ID,Components.Position);  \n    let size = $.get_component(ID,Components.Size);  \n    \n    let ball_id = $.get_entity_by_id(\"ball\");\n    let ball_pos = $.get_component(ball_id,Components.Position);\n    let ball_size = $.get_component(ball_id,Components.Size);\n    let ball_data = $.get_component(ball_id,Components.Storage);\n\n    if(ball_data.collided == 0) {\n      if($.AABB(ball_pos.x + ball_data.vel_x,ball_pos.y + ball_data.vel_y,ball_size.w,ball_size.h,pos.x,pos.y,size.w,size.h)) {\n        \n        if($.AABB(ball_pos.x + ball_data.vel_x,ball_pos.y,ball_size.w,ball_size.h,pos.x,pos.y,size.w,size.h)) { \n          ball_data.collided = 1;\n          ball_data.x_dir =  ball_data.x_dir * -1; \n        }\n        if(ball_data.collided == 0) {\n          if($.AABB(ball_pos.x,ball_pos.y + ball_data.vel_y,ball_size.w,ball_size.h,pos.x,pos.y,size.w,size.h)) {\n            ball_data.collided = 1;\n            ball_data.y_dir =  ball_data.y_dir * -1; \n          }\n        }\n        \n          $.remove_entity(ID);\n      }\n    }\n}\n\n\nfunc on_init(ID) {\n    for(let i = 0; i < 10; i = i + 1) {\n    for(let j = 0; j < 10; j = j +1) {\n      let id = $.create_entity(x = 30 * i + 60 ,y = j * 30 + 10,w = 25,h = 25,r = 20,g = 120,b = 255,on_block_init,on_block_update);\n  }\n    }\n}\nfunc on_update(ID) {\n\n}"
     },
@@ -89,7 +89,6 @@ const PONG_SRC =
         }
     ]
 }
-
 
 export default PONG_SRC;
 

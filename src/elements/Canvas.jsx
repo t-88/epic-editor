@@ -55,7 +55,6 @@ export default function Canvas() {
   useEffect(() => {
 
     const on_resize = (_) => {
-      console.log(Math.round(window.devicePixelRatio * 100));
       if(window.innerWidth < 1000 || window.devicePixelRatio * 100 >= 150) {
         engine.app_scale.val = 0.7;
       } else {
