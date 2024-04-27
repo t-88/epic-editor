@@ -86,7 +86,7 @@ function sys__clear_entities() {
     }
 }
 
-function sys__init() {
+function sys__restart() {
     runner.restart = true;
 }
 function sys__get_entity_by_id(id) {
@@ -246,6 +246,7 @@ class Runner {
                 for (let uuid in self.entities) {
                     self.entities[uuid].update(uuid);
                     if(self.restart) {
+                        sys__clear_entities();
                         self.restart = false;
                         init();
                         break;
@@ -255,7 +256,7 @@ class Runner {
             init();
             self.kaboom.onUpdate(() => {
                 self.dt = self.kaboom.dt();
-                update();
+            update();
             });
         }`;
     }
