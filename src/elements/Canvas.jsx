@@ -11,7 +11,9 @@ export default function Canvas() {
   const active_scene = useSnapshot(engine.active_scene);
   const code_editor_prox = useSnapshot(engine.code_editor);
   const script_prox = useSnapshot(engine.cur_script_prox);
+  const app_scale_prox = useSnapshot(engine.app_scale);
   const ref = useRef();
+
   const navigate = useNavigate();
 
   const options = [
@@ -46,7 +48,28 @@ export default function Canvas() {
   useEffect(() => {
     engine.canvas_rect.x = ref.current.getBoundingClientRect().x;
     engine.canvas_rect.y = ref.current.getBoundingClientRect().y;
+    engine.get_canvas_rect = () => ref.current.getBoundingClientRect();
   }, [ref]);
+
+
+  useEffect(() => {
+
+    const on_resize = (_) => {
+      console.log(Math.round(window.devicePixelRatio * 100));
+      if(window.innerWidth < 1000 || window.devicePixelRatio * 100 >= 150) {
+        engine.app_scale.val = 0.7;
+      } else {
+        engine.app_scale.val = 1;
+      }
+    }
+    on_resize();
+
+    window.addEventListener("resize",on_resize);
+    return () => {
+      window.removeEventListener("resize",on_resize);
+    }
+  },[]);
+
   return (
     <div id="canvas-container">
       <div id="scene-option">
@@ -57,7 +80,9 @@ export default function Canvas() {
           <p className="menu-button" onClick={on_run}>{"Run"}</p>
         </div>
       </div>
-      <div ref={ref} onClick={(e) => engine.on_canvas_click(e)}>
+
+  
+      <div ref={ref} onClick={(e) => engine.on_canvas_click(e)} id="app-container" style={{transform: `scale(${app_scale_prox.val})`}}>
         <active_scene.val.renderer />
       </div>
 

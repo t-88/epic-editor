@@ -8,7 +8,6 @@ import { transpile } from '../op_lang/wapper';
 
 
 function download_text_file(filename, text) {
-    console.log(text);
     var elem = document.createElement("a");
     elem.setAttribute("href", "data:text/plain;charset=utf8," + encodeURIComponent(text));
     elem.setAttribute("download", filename);
@@ -44,6 +43,7 @@ class Engine {
             offset: { x: 0, y: 0, }
         }
         this.canvas_rect = { x: 0, y: 0 };
+        this.get_canvas_rect = () => {}; 
 
 
         this.code_editor = proxy({
@@ -53,9 +53,11 @@ class Engine {
         });
 
 
+        this.app_scale = proxy({val : 1});
         this.console = proxy([]);
         this.events();
     }
+
 
     events() {
         document.body.onmousedown = () => {
@@ -144,8 +146,8 @@ class Engine {
     mouse_move(e) {
         if (this.mouse_down) {
             if (this.dragged_entity_info.entity.val) {
-                this.dragged_entity_info.entity.val.comps.pos.x.val = Math.round(e.clientX - this.canvas_rect.x - this.dragged_entity_info.offset.x);
-                this.dragged_entity_info.entity.val.comps.pos.y.val = Math.round(e.clientY - this.canvas_rect.y - this.dragged_entity_info.offset.y);
+                this.dragged_entity_info.entity.val.comps.pos.x.val = Math.round(((e.clientX   - this.get_canvas_rect().x) / this.app_scale.val - this.dragged_entity_info.offset.x   ) );
+                this.dragged_entity_info.entity.val.comps.pos.y.val = Math.round(((e.clientY   - this.get_canvas_rect().y) / this.app_scale.val - this.dragged_entity_info.offset.y   ) );
                 engine.update_store();
             }
 
@@ -251,3 +253,5 @@ const engine = new Engine();
 export default engine;
 
 
+
+//TODO: update store problems
